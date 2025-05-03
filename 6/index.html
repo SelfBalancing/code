@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>Code: 逻辑与开关</title> 
+  <link rel="stylesheet" href="css/style.240618.css"> 
+ </head> 
+ <body> 
+  <header> 
+   <h1> <a href="../index.html"><i>《CODE》 返回目录</i></a><br><i>《编码：隐匿在计算机软硬件背后的语言》</i><br> </h1> 
+   <div class="narrative"> 
+   <p>此部分对应第一版原文《第10章 逻辑与开关》</p>
+   <p>建议结合原文进行交互阅读</p>
+   </div>
+   <h2>01 逻辑与开关</h2> 
+  </header> 
+  <div class="narrative"> 
+   <p> 本页面将展示如何用开关、电池、灯泡和导线组成的简单电路</p>
+   <p>来实现基本的逻辑运算</p> 
+  
+
+   <p> 在下方电路中，可通过鼠标点击或手指触摸来切换开关状态。</p>
+    <p><span style="color: red;">红色高亮</span>表示当前有电流🔋通过电路。</p>
+  </div> 
+  <h3>串联开关电路</h3> 
+  <div class="narrative"> 
+   <p>将两个开关 串联 连接可实现逻辑 与 运算（AND）。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasSeries" width="640" height="400">
+    您的浏览器不支持画布元素，请升级或者使用电脑浏览器
+   </canvas> 
+  </div> 
+  <h3>并联开关电路</h3> 
+  <div class="narrative"> 
+   <p>将两个开关 并联 连接可实现逻辑 或 运算（OR）。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasParallel" width="640" height="400">
+    您的浏览器不支持画布元素，请升级或者使用电脑浏览器
+   </canvas> 
+  </div> 
+  <h3>猫咪选择器</h3> 
+  <div class="narrative"> 
+   <p>什么时候你会用到逻辑呢运算?</p>
+   <p>假设你走进宠物商店告诉店员：“我想要一只猫🐱”</p>
+   <p>店员会问你：“你想要什么样的猫🐱？”</p>
+   <p>这时你就会很有逻辑地表达：”我想要一只公猫，已绝育的，白色或褐色都可以；或者一只母猫，已绝育的，除了白色任何颜色都可以；或者一只黑猫。🤗”</p>
+   <p>你制作了一个电路，用于判断特定猫咪是否符合你的筛选条件</p>
+   <p>你对着店员抱出来的猫咪，开始调试你的电路</p>
+   <p>店员拿出了绝育的白色母猫，相应的开关闭合后，灯泡并没有点亮</p>
+   <p>店员又拿出了一只猫</p>
+   <p>嗯，公猫，你按下了公🐱的开关，又是绝育的，嗯，你又按下绝育开关</p>
+   <p>还是白色的，你按下白色开关，最后💡灯泡亮了，你知道，这就是你的梦中情猫</p>
+   <p>如果不是你想要的猫，那么灯泡💡将不会亮起</p>
+
+   
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasKittens" width="800" height="550">
+    您的浏览器不支持画布元素，请升级或者使用电脑浏览器
+   </canvas> 
+  </div> 
+  <div class="narrative"> 
+  <p>将布尔代数中的<strong>AND</strong>和<strong>OR</strong>同线路中的开关<strong>串联</strong>及<strong>并联</strong>关联到一起</p>
+  <h2>逻辑运算通过电路实现，这是计算机的一个重要起点</h2>
+  </div>
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+  <script src="js/PropagatingLogicLib.240618.js"></script> 
+  <script src="js/PropagatingIoLib.240618.js"></script> 
+  <script src="js/StructuredLayoutLib.240618.js"></script> 
+  <script src="js/Chapter06SwitchesInSeries.json.js"></script> 
+  <script src="js/Chapter06SwitchesInParallel.json.js"></script> 
+  <script src="js/Chapter06KittenSelector.json.js"></script> 
+  <script>
+            new CircuitBuilder(canvasSeries, Chapter06SwitchesInSeries);
+            new CircuitBuilder(canvasParallel, Chapter06SwitchesInParallel);
+            new CircuitBuilder(canvasKittens, Chapter06KittenSelector);
+        </script>  
+ </body>
+</html>
