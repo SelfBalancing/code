@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="zh">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>CODE：继电器与逻辑门</title> 
+  <link rel="stylesheet" href="css/style.240618.css"> 
+ </head> 
+ <body> 
+  <header> 
+   <h1> <a href="../index.html"><i>《CODE》 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   <div class="narrative"> 
+    <p>此部分对应第一版原文《第11章 门》</p>
+    <p>建议结合原文进行交互阅读</p>
+    </div>
+   <h2> 02 继电器与逻辑门</h2> 
+  
+  </header> 
+  <div class="narrative"> 
+   <p> 在电路中实现逻辑运算的更好方法是使用<strong>逻辑门</strong></p>
+   <p>这些逻辑门可以用简单的<strong>继电器</strong>构建。</p>
+   <h4>为什么要使用继电器，而不是使用开关呢？</h4>
+   <p>继电器优于开关之处就在于，继电器可以被其他继电器所控制，而不必由人工控制<p>
+   <p>继电器的核心优势在于其能够通过电信号控制其他电路，从而实现自动化。</p>
+   <p>通过组合继电器，可以构建复杂的逻辑网络，甚至实现算术操作。</p>
+   <p>注意：由于在作图会简化电池🔋等要素，你需要有一个完整的<strong>继电器</strong>的概念</p>
+   <iframe
+   style="border: 1px solid #ccc; border-radius: 0.5rem;"
+   src="https://inscribed.app/embed?type=presentation&gist_url=https%3A%2F%2Fgist.githubusercontent.com%2FSelfBalancing%2Fd8d20c8deab48c002c2f90b8fd9555d5%2Fraw%2Fff7727d1b468d52874c5c21599aa63e001d26857%2F%2525E7%2525BB%2525A7%2525E7%252594%2525B5%2525E5%252599%2525A8%2525E6%252595%252599%2525E5%2525AD%2525A6%2525E4%2525B8%25258E%2525E7%2525A7%252591%2525E6%252599%2525AE"
+   width="100%"
+   height="500"
+   frameborder="0"
+   allowfullscreen
+  ></iframe>
+
+   <h4>交互说明</h4>
+   <p>本页面将展示逻辑门如何执行逻辑运算。</p> 
+   <p> 可通过鼠标点击或手指触摸来切换开关状态。（点击开关而不是继电器拔片）</p> 
+  </div> 
+  <h3>AND逻辑继电器 与门 </h3> 
+
+  
+  
+  <div class="canvas-container"> 
+   <canvas id="canvasAnd" width="780" height="460">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+   <div class="narrative">
+    <p> 与门的输出只有在两个输入都为1时才为1。</p>
+    <p> 以下是AND逻辑继电器 与门的简化示意图，以后都用此简化图替代</p>
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250501104644.png" alt="与门示意图" style="display: block; margin: 0 auto; max-width: 50%;">
+ 
+    <p>使用简化图，上方继电器电路可以这样表示</p>
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250501105407.png" alt="简化示意图" style="display: block; margin: 0 auto; max-width: 50%;">
+  </div>
+
+  <h3>OR逻辑继电器 或门</h3> 
+  <div class="canvas-container"> 
+   <canvas id="canvasOr" width="780" height="460">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+    </div>  <div class="narrative">
+      <p> 或门的输出只需两个输入至少有一个为1时就为1。</p>
+      <p> 以下是OR逻辑继电器 或门的简化示意图，以后都用此简化图替代</p>
+      <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250501105730.png" alt="或门示意图" style="display: block; margin: 0 auto; max-width: 50%;">
+     
+    </div>
+  <h3>小猫🐱选择器</h3> 
+  <div class="narrative"> 
+   <p> 现在小猫选择器可以用逻辑门而不是开关来构建。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasKittens" width="1200" height="450">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <div class="narrative"> 
+   <p> 以下是之前展示的逻辑门的反向版本。</p> 
+  </div> 
+  <h3>NOR逻辑继电器 或非门</h3> 
+  <div class="canvas-container"> 
+   <canvas id="canvasNor" width="720" height="440">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+</div>  <div class="narrative">
+  <p> 在或非门中，两个输入中有一个为1输出就为0，只有两个输入都为0，输出才为1。</p>
+  <p> 以下是NOR逻辑继电器 或非门的简化示意图，以后都用此简化图替代</p>
+  <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250501111742.png" alt="或非门示意图" style="display: block; margin: 0 auto; max-width: 50%;">
+  <p>除去输出部分的小圆圈，这个符号与或门非常相像。</p>
+  <p>小圆圈表示"反向"​，所以或非门也可用下面的符号表示</p>
+  <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250501110350.png" alt="或非门极简示意图" style="display: block; margin: 0 auto; max-width: 50%;">
+</div>
+  <h3>NAND逻辑继电器 与非门</h3> 
+  <div class="canvas-container"> 
+   <canvas id="canvasNand" width="780" height="460">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <div class="narrative">
+   <p> 与非门的输出只有在两个输入都为1时才为0。</p>
+   <p> 以下是NAND逻辑继电器 与非门的简化示意图，以后都用此简化图替代</p>
+
+   <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250501113108.png" alt="与非门示意图" style="display: block; margin: 0 auto; max-width: 50%;">
+   <p>与非门的符号与与门非常相像，只是多了一个小圆圈。</p>
+  
+  <h3>四种基本双输入逻辑门</h3> 
+  <div class="narrative"> 
+   <p> 为了避免重复画继电器，我们将它们称为逻辑门</p>
+   <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/52aae2bddcaa0b23a80b5f8285bc6b5.jpg" alt="逻辑门示意图" style="display: block; margin: 0 auto; max-width: 100%;">
+   <p> 这是四种基本逻辑门的总结，开关现在显示为左上角的简单方框。</p>
+   <p>开关关闭时显示0，打开时显示1。您可以通过鼠标点击或手指触摸来切换这些开关。</p>
+    <p>输出不再使用灯泡表示，而是用一个标有0或1的圆圈显示。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasAllFour" width="740" height="675">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <h3>摩根定律</h3> 
+  <div class="narrative"> 
+   <p> 19世纪英国数学家摩根证明了各种逻辑运算之间的密切关系，如下图所示。</p> 
+   <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/f8056ce1181d44228974d40dbb4b72d.jpg" alt="摩根定律示意图" style="display: block; margin: 0 auto; max-width: 80%;">
+  
+
+   <ul> 
+    <li>两个操作数先被取反，再进行与运算。这与两个操作数进行或运算后再取反（即或非）的结果是一样的</li> 
+    <li>两个操作数先被取反，再进行或运算。这与两个操作数进行与运算后再取反（即与非）的结果是一样的</li>
+   </ul> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasDeMorgan" width="700" height="675">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+  <script src="js/PropagatingLogicLib.240618.js"></script> 
+  <script src="js/PropagatingRelayLib.240618.js"></script> 
+  <script src="js/PropagatingIoLib.240618.js"></script> 
+  <script src="js/PropagatingGatesLib.240618.js"></script> 
+  <script src="js/StructuredLayoutLib.240618.js"></script> 
+  <script src="js/Chapter08LogicRelaysCommon.json.js"></script> 
+  <script src="js/Chapter08AndLogicRelays.json.js"></script> 
+  <script src="js/Chapter08OrLogicRelays.json.js"></script> 
+  <script src="js/Chapter08KittenSelector.json.js"></script> 
+  <script src="js/Chapter08NorLogicRelays.json.js"></script> 
+  <script src="js/Chapter08NandLogicRelays.json.js"></script> 
+  <script src="js/Chapter08FourBasicGates.json.js"></script> 
+  <script src="js/Chapter08DeMorgansLaws.json.js"></script> 
+  <script>
+            new CircuitBuilder(canvasAnd, Chapter08AndLogicRelays);
+            new CircuitBuilder(canvasOr, Chapter08OrLogicRelays);
+            new CircuitBuilder(canvasKittens, Chapter08KittenSelector);
+            new CircuitBuilder(canvasNor, Chapter08NorLogicRelays);
+            new CircuitBuilder(canvasNand, Chapter08NandLogicRelays);
+            new CircuitBuilder(canvasAllFour, Chapter08FourBasicGates);
+            new CircuitBuilder(canvasDeMorgan, Chapter08DeMorgansLaws);
+        </script>  
+ </body>
+</html>

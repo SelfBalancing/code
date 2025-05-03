@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="zh">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>Code: 10进制的替代品</title> 
+  <link rel="stylesheet" href="css/style.240618.css"> 
+ </head> 
+ <body> 
+  <header> 
+   <h1> <a href="../index.html"><i>《CODE》 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   <h2>03 十进制的替代品——二进制</h2> 
+   <div class="narrative"> 
+    <p>此部分对应第一版原文《第16章 存储器组织》</p>
+    <p>建议结合原文进行交互阅读</p>
+    </div>
+  </header> 
+  <div class="narrative"> 
+   <p> 本章主要讨论替代数制(包括二进制)</p>
+   <p>最后通过两个电路展示如何使用逻辑门电路来解析或生成二进制数。</p> 
+  </div> 
+  <h3>三-八译码器</h3> 
+  <div class="narrative"> 
+   <p> 第一个电路称为<i>3-8译码器</i>，用于显示三位二进制数的十进制值。</p>
+   <p>通过鼠标点击或手指触摸切换顶部的开关。</p>
+   <p>底部点亮的灯泡显示该二进制数对应的十进制值。</p>
+   <p>例如，二进制101对应十进制5。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvas3to8" width="850" height="625">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <h3>八-三编码器</h3> 
+  <div class="narrative"> 
+   <p> 第二个电路称为<i>编码器</i>。</p>
+   <p>使用鼠标或手指将顶部的长条长按拖动到0到7之间的特定十进制数。</p>
+   <p>底部输出显示该数的二进制值。</p>
+   <p>例如，十进制6对应二进制110。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvas8to3" width="400" height="650" style="touch-action: none">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <h3>有多少种双输入逻辑门？</h3> 
+  <div class="narrative"> 
+   <p> 此前我们介绍了四种标准双输入门：AND、OR、NAND和NOR。</p>
+   <p>但您可能想知道：还有其他类型吗？如果有，共有多少种？</p> 
+   <p> 答案是16种。共有16种独特的双输入门。</p> 
+   <p> 您可以通过构建一个表格来验证这一点</p>
+   <p>该表格显示了所有输入组合(用<b>A</b>和<b>B</b>表示)及其对应的输出</p>
+   <p>从<b>Output</b>开始每一行代表一种输出门：</p> 
+   <p>我将一些比较经典的逻辑门进行了说明，比如AND、OR等：</p> 
+   <table> 
+    <tbody>
+     <tr>
+      <th>A:</th>
+      <th>0</th>
+      <th>0</th>
+      <th>1</th>
+      <th>1</th>
+     </tr> 
+     <tr>
+      <th>B:</th>
+      <th>0</th>
+      <th>1</th>
+      <th>0</th>
+      <th>1</th>
+     </tr> 
+     <tr>
+      <th>Output:1</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+     </tr> 
+     <tr>
+      <th>AND 与门 2</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+     </tr> 
+     <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+     </tr> 
+     <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+     </tr> 
+     <tr>
+      <th>5</th>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+     </tr> 
+     <tr>
+      <th>6</th>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+     </tr> 
+     <tr>
+      <th>XOR 异或门7</th>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+     </tr> 
+     <tr>
+      <th>OR 或门8</th>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+     </tr> 
+     <tr>
+      <th>NOR 或非门9</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+     </tr> 
+     <tr>
+      <th>XNOR 同或门10</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+     </tr> 
+     <tr>
+      <th>11</th>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+     </tr> 
+     <tr>
+      <th>12</th>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+     </tr> 
+     <tr>
+      <th>13</th>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+     </tr> 
+     <tr>
+      <th>14</th>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+     </tr> 
+     <tr>
+      <th>NAND 与非门15</th>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+     </tr> 
+     <tr>
+      <th>16</th>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+     </tr> 
+    </tbody>
+   </table> 
+   <p> 已经考虑了所有可能性</p>
+   <p>因为<b>Output</b>的16行是0到15的二进制数。</p>
+   <p> 其中一些双输入门是简单的，例如第一行和最后一行，它们不依赖于任何输入。</p>
+   <p>有些只依赖于其中一个输入。</p>
+   <p>但它们都可以通过标准四门和反相器的基本逻辑运算组合来实现：</p>
+   <table> 
+    <tbody>
+     <tr>
+      <th>A:</th>
+      <th>0</th>
+      <th>0</th>
+      <th>1</th>
+      <th>1</th>
+     </tr> 
+     <tr>
+      <th>B:</th>
+      <th>0</th>
+      <th>1</th>
+      <th>0</th>
+      <th>1</th>
+      <th>Logical operation</th>
+     </tr> 
+     <tr>
+      <th>Output:</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0 (ground)</td>
+     </tr> 
+     <tr>
+      <th></th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>AND</td>
+     </tr> 
+     <tr>
+      <th></th>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>A AND NOT B</td>
+     </tr> 
+     <tr>
+      <th></th>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>A</td>
+     </tr> 
+     <tr>
+      <th></th>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>NOT A AND B</td>
+     </tr> 
+     <tr>
+      <th></th>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>B</td>
+     </tr> 
+     <tr>
+      <th></th>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>(A OR B) AND (A NAND B)</td>
+     </tr> 
+     <tr>
+      <th></th>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>OR</td>
+     </tr> 
+     <tr>
+      <th></th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>NOR</td>
+     </tr> 
+     <tr>
+      <th></th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>(A NOR B) OR (A AND B)</td>
+     </tr> 
+     <tr>
+      <th></th>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>NOT B</td>
+     </tr> 
+     <tr>
+      <th></th>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>A OR NOT B</td>
+     </tr> 
+     <tr>
+      <th></th>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>NOT A</td>
+     </tr> 
+     <tr>
+      <th></th>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>NOT A OR B</td>
+     </tr> 
+     <tr>
+      <th></th>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>NAND</td>
+     </tr> 
+     <tr>
+      <th></th>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1 (V)</td>
+     </tr> 
+    </tbody>
+   </table> 
+   <p> 如果仔细观察此表，您会发现<b>Output</b>部分的上半部分是下半部分的镜像：</p>
+    <p>ground(第一行)与V(最后一行)相反；AND(第二行)与NAND(倒数第二行)相反；依此类推。</p>
+   <p>注意观察 (A NOR B) OR (A AND B)这一行</p>
+   <p>也就是XOR异或0110</p>
+    <p>这种情况下，当<b>A</b>和<b>B</b>中有一个为1但不同时为1时输出为1；</p>
+   
+   <h4> XOR门对于构成一种十分常用的电子器件非常重要，请拭目以待。</h> 
+  </div> 
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+  <script src="js/PropagatingLogicLib.240618.js"></script> 
+  <script src="js/PropagatingIoLib.240618.js"></script> 
+  <script src="js/PropagatingGatesLib.240618.js"></script> 
+  <script src="js/PropagatingAdvIoLib.240619.js"></script> 
+  <script src="js/StructuredLayoutLib.240618.js"></script> 
+  <script src="js/Chapter10ThreeToEightDecoder.json.js"></script> 
+  <script src="js/Chapter10EightToThreeEncoder.json.js"></script> 
+  <script>
+            new CircuitBuilder(canvas3to8, Chapter10ThreeToEightDecoder);
+            new CircuitBuilder(canvas8to3, Chapter10EightToThreeEncoder);
+        </script>  
+ </body>
+</html>
