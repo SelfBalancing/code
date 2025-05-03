@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="zh">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>编码：06 如何实现减法 </title> 
+  <link rel="stylesheet" href="css/style.240618.css"> 
+ </head> 
+ <body> 
+  <header> 
+   <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   <h2>06 如何实现减法</h2> 
+  </header> 
+  <div class="narrative"> 
+   <p> 接下来我们将在加法器基础上扩展实现减法功能。</p> 
+   <p>首先从我们最熟悉的十进制加法开始</p>
+   <p>只考虑被减数大于减数的情况</p>
+   <hr style="margin: 20px 0; border: 0; border-top: 1px dashed #ad8888;">
+   <p>比如说253减去176</p>
+   <p>首先从最右列着手</p>
+   <p>6是大于3的，因此从5上借1，再用13减去6，得到结果为7</p>
+   <p>由于我们已经在5上借了1，因此，现在实际上那一位是4</p>
+   <p>而4是小于7的，因此继续从2上借1,</p>
+   <p>14减7结果为7。而由于在2上借了1</p>
+   <p>实际上这一位是1，从中减去1，结果为0。</p>
+   <p>因此，最后的结果应为77：</p>
+   <p>现在我们用一个小技巧来让减法不涉及借位</p>
+   <p>为了避免借位，首先要从999中减去减数，而不是从原来的被减数中减去减数</p>
+   <p>由于操作数是三位数，所以这里使用999。</p>
+   <p>如果操作数是4位，则用9999。</p>
+   <p>从一串9中减去一个数叫做对9求补数。</p>
+   <p>176对9的补数是823。</p>
+   <p>反之亦然：823对9的补数是176。</p>
+   <p>这样的好处就是无论减数是多少，计算对9的补数都不需要借位。</p>
+   <p>计算出减数对9的补数后，将补数与原来的被减数相加：</p>
+   <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250502190222.png" alt="补数加法示意图" style="display: block; margin: 0 auto; max-width: 50%;">
+   <p>最后再将结果加1，并减去1000。</p>
+   <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250502190248.png" alt="结果调整示意图" style="display: block; margin: 0 auto; max-width: 50%;">
+   <p>到此，我们就得到了结果。</p>
+   <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250502190318.png" alt="最终结果示意图" style="display: block; margin: 0 auto; max-width: 50%;">
+   <p>答案与先前的相同，而且没有用到借位。</p>
+   <p>为什么这种方法行得通呢？</p>
+   <p>原题目是这样的：</p>
+   <p>253-176</p>
+   <p>在这个式子中加上一个数再减去这个数，</p>
+   <p>结果是相同的。</p>
+   <p>因此先加上1000，</p>
+   <p>再减去1000：253-176+1000-1000</p>
+   <p>这个式子与下式等价：</p>
+   <p>253-176+999+1-1000</p>
+   <p>然后用以下方式将数字重新组合：</p>
+   <b>253+(999-176)+1-1000</b>
+   <p>同样的技巧可以用于二进制数中</p>
+   <p>而且实际上这要比十进制数简单</p>
+   <p>让我们一起来看看该如何操作</p>
+   <p>将这些数字转化为二进制数，问题变为：</p>
+   <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250502190647.png" alt="二进制转换示意图" style="display: block; margin: 0 auto; max-width: 50%;">
+   <p>第一步，用11111111（即255）减去减数</p>
+   <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250502190748.png" alt="二进制减法示意图" style="display: block; margin: 0 auto; max-width: 50%;">
+   <p>当计算十进制数减法的时候，</p>
+   <p>减数是从一串9中减去的，结果称为9的补数。</p>
+   <p>在二进制数减法中，减数是从一串1中减去的，结果称为1的补数。</p>
+   <p>但是请注意，我们在求对1的补数时并不需要用到减法。</p>
+   <p>在求对1的补数时，只需将原来的二进制数中的1变为0，将0变为1即可。</p>
+   <p>第二步，将减数对1的补数与被减数相加：</p>
+   <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250502190841.png" alt="二进制补数加法示意图" style="display: block; margin: 0 auto; max-width: 50%;">
+   <p>第三步，将上式所得结果加1：</p>
+   <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250502190923.png" alt="二进制加1示意图" style="display: block; margin: 0 auto; max-width: 50%;">
+   <p>第四步，减去100000000（即256）​：</p>
+   <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250502190945.png" alt="二进制最终结果示意图" style="display: block; margin: 0 auto; max-width: 50%;">
+   <p>结果就等于十进制数的77</p>
+<hr style="margin: 20px 0; border: 0; border-top: 1px dashed #ad8888;">  
+   <p>加法器中新增部分为一个用来求8位二进制数对1补数的电路。</p>
+   <p>之前提到，二进制数对1求补数相当于对其每位取反，</p>
+   <p>因此我们计算8位二进制数补数的时候可以简单地应用8个反向器。</p>
+   <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250502191144.png" alt="反向器电路示意图" style="display: block; margin: 0 auto; max-width: 50%;">
+   <p>问题是，该电路只会对输入求反，</p>
+   <p>而我们要的是一台既能做加法又能做减法的机器，</p>
+   <p>因此就要求该电路当且仅当进行减法运算时才实现反转。</p>
+   <p>电路可以改造为如下图所示。</p>
+   <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250502191223.png" alt="改进电路示意图" style="display: block; margin: 0 auto; max-width: 50%;">
+   <p>标记为"取反"的信号将被输入到每一个异或门中。</p>
+   <p>回想一下异或门的工作方式，如下表所示。</p>
+   <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250502191319.png" alt="异或门真值表示意图" style="display: block; margin: 0 auto; max-width: 50%;">
+   <p>如果"取反"信号是0，则8个异或门输出与输入相同。</p>
+   <p>例如，如果输入是01100001，那么输出也为01100001。</p>
+   <p>如果"取反"信号为1，则输出信号反置。</p>
+  <p>因此在原有加法器的基础上，增加一个取反器，我们就可以进行减法的计算了</p>
+
+  </div> 
+
+
+  <h3>八位加法器/减法器</h3> 
+  <div class="narrative"> 
+   <p> 第一个电路与此前的八位加法器非常相似。</p>
+    <p>但是请注意，左侧的加号现在变成了一个按钮。</p>
+    <p>点击该按钮即可切换加减法。</p> 
+    <p>一组XOR门会反转第二行按钮的值(计算反码,也就是求对1的补数)</p>    
+    <p>这个按钮还有其他作用</p>
+    <p>它将右侧的<b>Carry In</b>设置为1，也就是+1</p>
+    <p>同时在最后与第8个加法器的输出进行异或，相当于是减了100000000</p>
+    <hr style="margin: 20px 0; border: 0; border-top: 1px dashed #ad8888;">
+   <p> 当您选择用第一个数减去第二个数时，</p>
+ 
+
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvas8BitAddSub" width="1225" height="665">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <div class="narrative"> 
+   <p> 如果加法结果大于255，或减法结果小于零，</p>
+    <p><b>Overflow</b>将会发光，表示结果无效。</p>
+
+  </div> 
+  <div class="narrative"> 
+  <h2>既然说到了减法，接着说下负数</h2>
+  <p>此前没有提到负数在二进制中是如何表示的</p>
+  <p>你可能设想二进制会同十进制一样应用传统的负数符号</p>
+  <p>例如，-77在二进制中为-1001101</p>
+  <p>这样做当然可以</p>
+  <p>但是应用二进制数的目的恰恰就在于只希望用0和1来表示所有的东西</p>
+  <p>当然也包括负号</p>
+  <p>当然，你可以简单地用一个二进制位来表示负号</p>
+  <p>当这一位为1的时候就表示负数，为0则表示正数，</p>
+  <p>尽管这样也是可行的，但还不够好</p>
+  <p>首先，借鉴一下现有的这个表示正数、负数的方法</p>
+  <p>…-1000000, -999999…-3, -2, -1, 0, 1, 2, 3…999999,1000000…</p>
+  <p>可以表示无限的正数和负数</p>
+  <p>但是如果我们并不需要无限大或无限小的数</p>
+  <p>而且在开始的时候我们就可以确定所使用的数字的范围</p>
+  <p>那么情况会不会不一样呢</p>
+  <p>举个例子</p>
+  <p>有一张银行卡，银行给了500元无息预支额度</p>
+  <p>但这张卡的余额不会达到500元</p>
+  <p>而且每次存取都是整数，不涉及角、分</p>
+  <p>意思是卡的余额是在-500元到499元的数</p>
+  <p>-500到499一共1000个数</p>
+  <p>而0到999也是1000个数，这表明我们只需三位数就能表示余额值</p>
+  <p>并且不需要负号</p>
+  <p>0到999中，把0到499给正数余额使用，500到999用来表示负数</p>
+  <p>具体情况如下：</p>
+  <p>用500表示-500</p>
+  <p>501表示-499</p>
+  <p>502表示-498</p>
+  <p>******</p>
+  <p>用998表示-2</p>
+  <p>用999表示-1</p>
+  <p>用000表示0</p>
+  <p>用001表示1</p>
+  <p>*****</p>
+  <p>用498表示498</p>
+  <p>用499表示499</p>
+  <p>我们把-500到499</p>
+  <p>从-500, -499, -498 …-4, -3, -2, -1, 0, 1, 2, 3, 4 … 497, 498, 499</p>
+  <p>表示成这样</p>
+  <p>500, 501, 502 … 996, 997, 998, 999, 000, 001, 002, 003, 004… 497, 498, 499</p>
+  <p>如果你能看到这里</p>
+  <p>那么恭喜你，你已经掌握了怎么将三位负数转化为0的补数了</p>
+  <p>例如想要得到-255对10的补数，用999减去255得到744，然后再加1，得到745</p>
+  <p>你可能听说过：​"减一个数就等于加一个负数。​"</p>
+  <p>然而，利用10的补数，我们将不会再用到减法。</p>
+  <p>所有的步骤都用加法来进行。</p>
+  <p>继续回到刚才的银行卡</p>
+  <p>假设卡里余额143元，你现在需要再使用78元</p>
+  <p>也就意味着要将一个值为负的78元加到143元上</p>
+  <p>-78对10的补数为999-078+1，即922</p>
+  <p>因此新余额为143+922，等于1065，忽略溢出就是65元</p>
+  <p>现在再消费150元，-150对10求补数是850</p>
+  <p>因此850加上剩下的65等于915</p>
+  <p>915是谁的补数？是-85的，因此现在卡里余额实际上是-85</p>
+  <p>在十进制中理解，在二进制中践行</p>
+  <p>现在需要表示的数的范围是-128～+127。</p>
+  <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250502213721.png" alt="补数范围示意图" style="display: block; margin: 0 auto; max-width: 50%;">
+  <p>最高有效位（最左位）作为符号位(sign bit)。</p>
+  <p>符号位中，1表示负数，0表示正数。</p>
+  <p>计算2的补数，等价于将每位取反再加1</p>
+  <p>-125的对2的补数，首先将01111101的每位取反，得到10000010，再加1，得到10000011</p>
+  <p>这个系统为我们提供了一种不用负号就能表示正、负数的方法。</p>
+  <p>同样也让我们自由地将正数和负数用加法法则相加。</p>
+  <p>例如，将与-127和124等价的两个二进制数相加。</p>
+  <p>利用上面的表格，可以简单地写为：</p>
+  <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250502214100.png" alt="二进制加法示例" style="display: block; margin: 0 auto; max-width: 50%;">
+  <p>结果等于十进制的-3</p>
+   <p>可以用下方的补码加法器进行验证</p>
+  </div>
+  <h3>八位补码加法器</h3> 
+  <div class="narrative"> 
+   <p> 以下加法器专门用于相加两个八位补码数，</p>
+    <p>范围从80h(十进制-128)到7Fh(十进制127)。</p>
+    <p>您选择的值的十六进制和十进制等效值显示在右侧。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasTwosCompAdder" width="1250" height="590">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <div class="narrative"> 
+   <p> 如果一个值为正而另一个为负，</p>
+    <p>结果总是有效的，</p>
+    <p>因为此时<b>Overflow</b>值为0。</p>
+    <p>但如果两个值都为正且和大于127，</p>
+    <p>或两个值都为负且和小于-128，</p>
+    <p><b>Overflow</b>值为1，且会发光，表示数据有溢出。</p> 
+  </div> 
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+  <script src="js/PropagatingLogicLib.240618.js"></script> 
+  <script src="js/PropagatingIoLib.240618.js"></script> 
+  <script src="js/PropagatingGatesLib.240618.js"></script> 
+  <script src="js/StructuredLayoutLib.240618.js"></script> 
+  <script src="js/Chapter14OneBitSummer.json.js"></script> 
+  <script src="js/Chapter14OneBitHalfer.json.js"></script> 
+  <script src="js/Chapter14OneBitFuller.json.js"></script> 
+  <script src="js/Chapter14EightBitComponent.json.js"></script> 
+  <script src="js/Chapter16EightBitAddSubComponent.json.js"></script> 
+  <script src="js/Chapter16EightBitAddSub.json.js"></script> 
+  <script src="js/Chapter16TwosCompAdder.json.js"></script> 
+  <script>
+            new CircuitBuilder(canvas8BitAddSub, Chapter16EightBitAddSub);
+            new CircuitBuilder(canvasTwosCompAdder, Chapter16TwosCompAdder);
+        </script>  
+ </body>
+</html>
