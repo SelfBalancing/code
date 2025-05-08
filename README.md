@@ -11,3 +11,8 @@
 https://selfbalancing.github.io/code/
 ## 20250503 1610 
 上传第二节和第三节，以及主页缺少的css
+
+## 20250508 2350
+上传第第七节 07 反馈与触发器
+* 通过Github Desktop实现更新
+![](https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250508235005.png)

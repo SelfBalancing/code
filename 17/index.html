@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="zh">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>编码：07 反馈与触发器</title> 
+  <link rel="stylesheet" href="css/style.240618.css"> 
+ </head> 
+ <body> 
+  <header> 
+   <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br></h1> 
+   <h2>07 反馈与触发器</h2> 
+  </header> 
+  <div class="narrative"> 
+   <p> 本章探讨各种形式的反馈，特别是其在触发器中的应用。</p> 
+  </div> 
+  <h3>振荡继电器</h3> 
+  <div class="narrative"> 
+   <p> 从一个简单的继电器振荡器开始。用鼠标或手指打开开关，观察继电器的振荡。</p> 
+   <p>继电器会经历以下过程</p>
+   <p>1.当开关闭合后，电路就连通了。</p>
+   <p>2.连通的电路使得电磁铁把金属簧片拉了下来。（电生磁的物理知识）</p>
+   <p>3.当金属簧片的位置变化时，电路不再连通，电磁铁不再具有磁性，金属簧片又弹回原位。</p>
+   <p>4.如此一来，电路又一次连通了。</p>
+   <p>开关一旦闭合，金属簧片就会上下跳动,电路也会随着跳动不断连通或断开</p>
+   <h3>那么此时就体现出振荡器的独特之处了，也就是构造它的继电器的独特之处</h3>
+   <p>在此之前我们讲过的所有的电路，其状态的改变都依靠人为的干预</p>
+   <p>通常是通过改变开关状态来实现的</p>
+   <p>但是振荡器却在不需要人干涉的情况下，可以完全自发地工作</p>
+   <p>这是因为振荡器的继电器是反馈型的，也就是说，它的输出会影响到输入，从而影响到输出，如此循环往复</p>
+   </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasOscillator" width="450" height="270">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <div class="narrative">
+   <p>采用0和1的交替序列来表示振荡器的输出</p>
+   <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250508213246.png" alt="输出电路图" style="display: block; margin: 0 auto; max-width: 50%;">
+  <p>水平坐标代表时间，垂直坐标用来表示输出是0还是1</p> 
+  <p>随着时间的推移，振荡器的输出在0和1之间按照固有的规律交替变化</p>
+  <p>因此，振荡器又经常被称为时钟(clock)，通过振荡进行计数也是一种计时方式。</p>
+  
+
+  
+  </div>
+
+  <h3>第一个触发器</h3> 
+  <div class="narrative"> 
+   <p> 第一个触发器使用两个NOR门连接，使每个门的输出成为另一个门的输入之一。</p>
+   <p>NOR或非门的逻辑图如下</p>
+   <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250508214136.png" alt="或非门逻辑图" style="display: block; margin: 0 auto; max-width: 50%;"> 
+   <p>或非门的特点是只有在两个输入端都没有电压时，输出端才产生电压。</p>
+   <p>下面是一个包含两个或非门、两个开关和一个灯泡的电路</p>
+   
+  </div> 
+
+  <div class="canvas-container"> 
+   <canvas id="canvasFirstFF" width="900" height="320">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+
+  <div class="narrative"> 
+    <p> 注意：左边或非门的输出是右边或非门的输入，而右边或非门的输出是左边或非门的输入</p>
+    <p> 这种连接方式我们称之为反馈(feedback)</p>
+    <p><b>初始状态</b>下，电路中只有左边的或非门输出电流，这是因为其两个输入均为0。</p>
+    <p><b>闭合上面的开关</b>，左边或非门将立刻输出0，右边或非门的输出也会随之变为1，这时灯泡将被点亮。</p>
+    <p>一旦<b>打开上面的开关</b>，灯炮依然闪闪发光。</p>
+    <p>这是因为由于左边或非门的输入中有一个为1，其输出依然是0，因而左边或非门的输出不变，所以灯泡仍然亮着</p>
+    <p><b>闭合下面的开关</b>。右边或非门的输入中有一个立刻变为1，其输出就相应地变为0，灯泡随之熄灭。左边或非门的输出此刻变为1。</p>
+
+    <p>这时你再去断开下面的开关就会发现，灯泡一直处在熄灭状态。</p>
+    <h4>总结一下</h4>
+    <p>只接通上面的开关，灯泡被点亮，断开此开关灯泡仍然亮着。</p>
+    <p>只接通下面的开关，灯泡被熄灭，断开此开关灯泡仍然不亮。</p>
+    <p>当两个开关都断开时，电路有两个稳定态，这类电路统称为<b>触发器(Flip-Flop)</b></p>
+    <p>两个稳定态的触发条件和表现不同，电路就有了记忆</p>
+    <p>它可以记住最近一次是哪个开关先闭合。</p>
+    <p>如果你遇到这样一种触发器，如果它的灯泡是亮着的，你就可以推测出最后一次连通的是上面的开关；</p>
+    <p>而如果灯泡不亮则可推测出最后一次连通的是下面的开关。</p>
+    <h4>打个比方</h4>
+    <p>跷跷板也有两个稳定状态，它不会长期停留在不稳定的中间位置。</p>
+    <p>通过观察跷跷板，我们很容易推测出哪边最后一次被压下来</p>
+    <p>触发器可以让电路“记住”之前发生了什么事情</p>
+    <p>上方这个较为简单的触发器称为R-S（Reset-Set，复位/置位）触发器</p>
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250508225541.png" alt="或非门逻辑图" style="display: block; margin: 0 auto; max-width: 50%;"> 
+    
+  <div> 
+
+  <h3>复位-置位(R-S)触发器</h3> 
+  <div class="narrative"> 
+   <p> 这是和上方相同的触发器，但重新排列以显示其对称性，并增加了一个额外输出。</p> 
+   <p>用Q来表示用于点亮灯泡的输出的状态。另一个输出（读做Q反）是对Q的取反。Q是0，Q反就是1</p>
+   <p>输入端S(Set)用来置位，R(Reset)用来复位。</p>
+   <p>你可以把“置位”理解为把Q设为1，而“复位”是把Q设为0</p>
+   <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250508230719.png" alt="或非门逻辑图" style="display: block; margin: 0 auto; max-width: 50%;">
+   <p>当状态S为1时（对应于先前触发器中上面的开关闭合的情况）​，此时Q变为1而Q反变为0；</p>
+   <p>当R状态为1时（对应于前面图中闭合下面的开关的情况）​，此时Q变为0而Q反变为1。</p>
+   <p>当S和R均为0时，输出保持Q和Q反当前状态不变</p>
+   <p>表中最后一行表示S和R均为1的输入组合是不存在的</p>
+   <p>因为这样的输入组合会导致Q和Q反同时变为0或1，这是不可能的</p>
+   <p> 在实际使用中，任何时候两个输入中只有一个为1。</p>
+   <p>因此，它们已被改为<b>瞬时开关</b>：仅在按下时开关才打开。</p> 
+   <p> 按下底部开关将<b>Q</b>输出设置为1。再次按下该按钮不会有任何效果。按下顶部开关将<b>Q</b>输出重置为0。同样，再次按下该按钮不会有任何效果。</p> 
+     </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasRS" width="620" height="380">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <div class="narrative"> 
+    <p>R-S触发器可以简化为带有输入和输出标志的小框图</p>
+   <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250508231605.png" alt="R-S电路简化图" style="display: block; margin: 0 auto; max-width: 50%;">
+   <hr style="margin: 20px 0; border: 0; border-top: 1px dashed #ad8888;">
+   <p>R-S触发器最突出的特点在于:它可以记住哪个输入端的最终状态为1</p>
+   <p>但有时需要一种记忆能力更加强大的电路，例如能记住在<b>某个特定时间点上</b>的一个信号是0还是1</p>
+   
+    </div>
+
+  <h3>保持触发器</h3> 
+  <div class="narrative"> 
+   <p> 在这个变体中，<b>Set</b>和<b>Reset</b>信号工作方式类似，但仅在Hold输入设置为1时有效。<b>Set</b>输入本质上将Hold输入的值保存到<b>Q</b>输出。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasHoldFF" width="880" height="420">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <h3>电平触发D型触发器</h3> 
+  <div class="narrative"> 
+   <p> 该触发器可以轻松修改为创建下面所示的标准电平触发D型触发器。当<b>Clock</b>为1时，<b>Data</b>输入被传输到<b>Q</b>输出。</p> 
+   <p> "电平触发"意味着当<b>Clock</b>为1时，<b>Data</b>输入的任何变化都会反映在<b>Q</b>输出中。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasLevel" width="880" height="420">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <h3>边沿触发D型触发器</h3> 
+  <div class="narrative"> 
+   <p> 在下面的"边沿触发"触发器中，<b>Q</b>输出仅在<b>Clock</b>输入从0变为1时从<b>Data</b>输入设置。<b>Data</b>输入的任何进一步变化都不会影响<b>Q</b>输出。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasEdge" width="1020" height="300">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <h3>八位累加加法器</h3> 
+  <div class="narrative"> 
+   <p> 在下面的电路中，八位加法器与边沿触发器结合创建了一个累加加法器。</p> 
+   <p> 要使用此加法器，在顶部的开关上输入一个二进制数。当您按下<b>Add</b>按钮时，该值存储在触发器中并显示在底部。但该值也会被路由回开关下方的加法器。您可以在顶部的开关上输入第二个数字并再次按下<b>Add</b>。现在结果是前两个数字的和。</p> 
+   <p> 您可以继续操作任意次数，但请注意只保留八位，最终的<b>Carry</b>位被丢弃。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasAccumulator" width="1200" height="750">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <h3>八位行波计数器</h3> 
+  <div class="narrative"> 
+   <p> 边沿触发器可以级联并与振荡器结合创建计数器。振荡器位于左上角，周期约为1秒。这为最右侧的触发器提供<b>Clock</b>输入，然后为下一个更高有效位的触发器提供<b>Clock</b>输入。</p> 
+   <p> 底部的值显示经过的秒数，但它基于JavaScript动画功能，可能不精确。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasCounter" width="1200" height="625">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <h3>带清零的电平触发D型触发器</h3> 
+  <div class="narrative"> 
+   <p> <b>Clear</b>信号通常很方便将触发器的输出设置为0，而不管其他输入如何。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasLevelClear" width="975" height="375">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <h3>带清零和预置的边沿触发D型触发器</h3> 
+  <div class="narrative"> 
+   <p> 这是一个边沿触发器，配备了<b>Clear</b>和<b>Preset</b>输入。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasEdgeClearPreset" width="800" height="500">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+  
+  <script src="js/PropagatingLogicLib.240618.js"></script> 
+  <script src="js/PropagatingRelayLib.240618.js"></script> 
+  <script src="js/PropagatingGatesLib.240618.js"></script> 
+  <script src="js/PropagatingIoLib.240618.js"></script> 
+  <script src="js/StructuredLayoutLib.240618.js"></script> 
+  <script src="js/Chapter17OscillatingRelay.json.js"></script> 
+  <script src="js/Chapter17FirstFlipFlop.json.js"></script> 
+  <script src="js/Chapter17FlipFlopCoreRS.json.js"></script> 
+  <script src="js/Chapter17RSFlipFlop.json.js"></script> 
+  <script src="js/Chapter17FlipFlopCoreD.json.js"></script> 
+  <script src="js/Chapter17HoldFlipFlop.json.js"></script> 
+  <script src="js/Chapter17DTypeFlipFlop.json.js"></script> 
+  <script src="js/Chapter17FlipFlopCoreEdge.json.js"></script> 
+  <script src="js/Chapter17EdgeTriggeredFlipFlop.json.js"></script> 
+  <script src="js/Chapter14OneBitSummer.json.js"></script> 
+  <script src="js/Chapter14OneBitHalfer.json.js"></script> 
+  <script src="js/Chapter14OneBitFuller.json.js"></script> 
+  <script src="js/Chapter17EightBitAdderComponent.json.js"></script> 
+  <script src="js/Chapter17EightBitAccumulatingAdder.json.js"></script> 
+  <script src="js/Chapter17EightBitRippleComponent.json.js"></script> 
+  <script src="js/Chapter17EightBitRippleCounter.json.js"></script> 
+  <script src="js/Chapter17FlipFlopCoreDClear.json.js"></script> 
+  <script src="js/Chapter17DTypeFlipFlopWithClear.json.js"></script> 
+  <script src="js/Chapter17FlipFlopCoreClearPreset.json.js"></script> 
+  <script src="js/Chapter17EdgeTriggeredFlipFlopWithClear.json.js"></script> 
+  <script>
+            new CircuitBuilder(canvasOscillator, Chapter17OscillatingRelay);
+            new CircuitBuilder(canvasFirstFF, Chapter17FirstFlipFlop);
+            new CircuitBuilder(canvasRS, Chapter17RSFlipFlop);
+            new CircuitBuilder(canvasHoldFF, Chapter17HoldFlipFlop);
+            new CircuitBuilder(canvasLevel, Chapter17DTypeFlipFlop);
+            new CircuitBuilder(canvasEdge, Chapter17EdgeTriggeredFlipFlop);
+            new CircuitBuilder(canvasAccumulator, Chapter17EightBitAccumulatingAdder);
+            new CircuitBuilder(canvasCounter, Chapter17EightBitRippleCounter);
+            new CircuitBuilder(canvasLevelClear, Chapter17DTypeFlipFlopWithClear);
+            new CircuitBuilder(canvasEdgeClearPreset, Chapter17EdgeTriggeredFlipFlopWithClear);
+        </script>  
+ </body>
+</html>
