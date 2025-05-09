@@ -1,0 +1,265 @@
+<!-- 
+    ColorSelector.html (c) Charles Petzold, 2024
+
+    This file is part of www.CodeHiddenLanguage.com, a website
+        that accompanies the book "Code: The Hidden Language of 
+        Computer Hardware and Software," 2nd edition (Microsoft
+        Press, 2023) by Charles Petzold.
+    
+    This file shows an interactive color selection using 
+    sliders. 
+--><!doctype html>
+<html lang="en">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>Code: Color Selector</title> 
+  <style>
+            /* The body of the page is set to fixed width and
+                centered on the page. */
+            body 
+            {
+                width: 600px;
+	            margin: 0 auto;
+            }
+            /* The header is centered. */
+            h1
+            {
+                text-align: center;
+            }
+            /* All elements with a class name of "slider" will
+                get a width of 500 pixels. */
+            .slider 
+            {
+                width: 500px;
+            }
+            /* All div elements with a class name of "center" will
+                be centered and have top and bottom margins of 
+                15 pixels. */
+            div.center
+            {
+                text-align: center;
+                margin: 15px 0px;
+            }
+        </style> 
+ </head> 
+ <body> 
+  <h1> Color Selector </h1> 
+  <!-- This is a div with no content. It will have a width of 500 
+                pixels (the width of the body as specified in the style
+                sheet) and a height of 300 pixels, as specified in the
+                style attribute set here. 
+             Normally this would be invisible on the screen, but code 
+                will later set the background-color style to a color 
+                selected with the sliders. --> 
+  <div id="colorBlock" style="height: 300px"></div> 
+  <!-- The section below the slider is enclosed in form and fieldset
+                tags. These aren't strictly necessary, but it's generally 
+                recommended that input elements such as sliders be placed 
+                in a form. --> 
+  <form> 
+   <fieldset> 
+    <!-- This div has a class name of center, which means its 
+                        contents will be horizontally centered with a top
+                        and bottom margin. --> 
+    <div class="center"> 
+     <!-- A label is customarily associated with an input
+                            element such as the one defined right below it.
+                            The for property indicates the id of that input
+                            element. --> 
+     <label for="redSlider"> 
+      <!-- The contents of this label is the text "Red = #"
+                                followed by two span elements that are 
+                                placeholders for the value of the red
+                                color component. --> Red = #<span id="redValueHex"></span> (<span id="redValueDec"></span>) </label> 
+     <!-- There is no such HTML element named "slider".
+                            Instead, it's an input element with a type
+                            property set to "range". The class name
+                            gives it a width of 500 pixels. 
+                          The min, max, step, and value attributes 
+                            initialize the slider. The slider can range
+                            from 0 through 255 with a step of 1. In 
+                            other words, it won't generate fractional 
+                            values. It has an initial value of 64. 
+                          Normally the label would appear to the left 
+                            of the input element, but because the 
+                            parent div is 600 pixels wide and the 
+                            slider is 500 pixel wide, the label must
+                            appear above the slider. --> 
+     <input type="range" id="redSlider" class="slider" min="0" max="255" step="1" value="64"> 
+    </div> 
+    <!-- div elements for the green and blue sliders are 
+                        defined similarly. --> 
+    <div class="center"> 
+     <label for="greenSlider"> Green = #<span id="greenValueHex"></span> (<span id="greenValueDec"></span>) </label> 
+     <input type="range" id="greenSlider" class="slider" min="0" max="255" step="1" value="128"> 
+    </div> 
+    <div class="center"> 
+     <label for="blueSlider"> Blue = #<span id="blueValueHex"></span> (<span id="blueValueDec"></span>) </label> 
+     <input type="range" id="blueSlider" class="slider" min="0" max="255" step="1" value="192"> 
+    </div> 
+    <!-- The final div in the form is just a label for 
+                        displaying the composite color. --> 
+    <div class="center"> 
+     <label> Composite Color = "<span id="compositeColor"></span>" </label> 
+    </div> 
+   </fieldset> 
+  </form> 
+  <!-- A final div on the page displays the standard HTML color 
+                selector. This is an input element with a type 
+                specification of "color". --> 
+  <div class="center"> 
+   <label for="htmlColorSelector">HTML Color Selector: </label> 
+   <input type="color" id="htmlColorSelector" value="#C08040"> 
+  </div> 
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+  <script>
+            // The JavaScript code begins with the definition of three 
+            //  variables for the red, green, and blue color components.
+            // As you'll see, these values are integer numbers ranging
+            //  from 0 through 255.
+            let R = 0;
+            let G = 0;
+            let B = 0;
+
+            // References to the three sliders are also obtained: 
+            let redSlider = document.getElementById("redSlider");
+            let greenSlider = document.getElementById("greenSlider");
+            let blueSlider = document.getElementById("blueSlider");
+
+            // Next are four functions. The first is responsible for 
+            //  creating a composite color from the R, G, and B
+            //  variables. It applies that color to the large block
+            //  at the top, and displays the value of the color below
+            //  the bottom slider.
+            function updateColor()
+            {
+                // An HTML color can be represented with a string that 
+                //  consists of a hash sign (#) followed by the two-digit 
+                //  hexadecimal values for red, green, and blue.
+                // 
+                // This is created here using string concatenation: Four 
+                //  strings are stuck together into one composite string.
+                //  The first of these four strings is simply a hash sign.
+                //
+                // The second part of this string is the red value 
+                //  converted to its hexadecimal value using the 
+                //  JavaScript toString function with an argument of 16.
+                //
+                // However, for values less than 16, the result will be only
+                //  one digit long. The JavaScript padStart function ensures 
+                //  that the string has two digits by padding it on the left
+                //  with "0" characters.
+                let color = "#" + R.toString(16).padStart(2,'0') + 
+                                  G.toString(16).padStart(2,'0') + 
+                                  B.toString(16).padStart(2,'0');
+
+                // That color value can then be applied to the div element
+                //  with an id of "colorBlock". This is accomplished by 
+                //  accessing the style property of that element, and the
+                //  backgroundColor property of that style.                                   
+                document.getElementById("colorBlock").style.backgroundColor = 
+                    color;
+
+                // That string is also displayed in a span within a label 
+                //  element. The span is named "compositeColor" so the 
+                //  color string can be set the the innerHTML property of
+                //  that.
+                //
+                // However, the toString(16) function used above uses
+                //  lowercase a, b, c, d, e, anf f for hexadecimal numbers.
+                //  The JavaScript toUpperCase function converts those to
+                //  uppercase.
+                document.getElementById("compositeColor").innerHTML = 
+                    color.toUpperCase();
+            }
+
+            // The next three functions get values from the red, green, 
+            //  and blue sliders, and update labels on the screen.
+            function getRedValue()
+            {
+                // The current value of the slider can be obtained from its
+                //  value property. This is not a number, however; it's a 
+                //  string. The first step is to convert this into an 
+                //  integer number using the JavaScript parseInt function:
+                R = parseInt(redSlider.value);
+
+                // The label associated with each slider displays the value
+                //  both in hexadecimal and decimal. The JavaScript toString 
+                //  function with an argument of 16 converts it to a 
+                //  hexadecimal string, padStart ensures that the result has
+                //  two digits, and toUpperCase converts to upper case.
+                document.getElementById("redValueHex").innerHTML = 
+                    R.toString(16).padStart(2, '0').toUpperCase();
+
+                // The decimal value is rather easier.
+                document.getElementById("redValueDec").innerHTML = 
+                    R.toString();
+
+                // Now that a value of R is available, the updateColor function
+                //  can be called to use the new value in color the div and
+                //  displaying the composite color string.
+                updateColor();
+            }
+
+            // The next two functions are similar for green and blue.
+            function getGreenValue()
+            {
+                G = parseInt(greenSlider.value);
+
+                document.getElementById("greenValueHex").innerHTML = 
+                    G.toString(16).padStart(2, '0').toUpperCase();
+
+                document.getElementById("greenValueDec").innerHTML = 
+                    G.toString();
+
+                updateColor();
+            }
+
+            function getBlueValue()
+            {
+                B = parseInt(blueSlider.value);
+
+                document.getElementById("blueValueHex").innerHTML = 
+                    B.toString(16).padStart(2, '0').toUpperCase();
+
+                document.getElementById("blueValueDec").innerHTML = 
+                    B.toString().toUpperCase();
+
+                updateColor();
+            }
+
+            // The following three statements are only executed when the 
+            //  webpage loads. The three functions defined above are called
+            //  to obtain the values from the sliders; these values are set
+            //  in the HTML. The labels for the sliders are initialized,
+            //  as well as the color of the big block and the composite
+            //  color value.
+            getRedValue();
+            getGreenValue();
+            getBlueValue();
+
+            // That takes care of all the initilization of the page. The
+            //  next step is to set handlers whenever one of the sliders
+            //  is manipulated. When the slider value changes, it
+            //  generates an "input" event. When that event occurs, the
+            //  functions can be called to obtain new values and 
+            //  update the screen.
+            redSlider.addEventListener("input", getRedValue);
+            greenSlider.addEventListener("input", getGreenValue);
+            blueSlider.addEventListener("input", getBlueValue);
+        </script>  
+ </body>
+</html>

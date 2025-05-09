@@ -1,0 +1,379 @@
+<!-- 
+    DisplayingBasicInformation.html (c) Charles Petzold, 2024
+
+    This is an HTML (Hyptertext Markup Language) file; this
+        text is a comment intended to be read by human beings
+        rather than interpreted by a web browser. HTML comments 
+        are delimited by a specific combination of angle brackets,
+        exclamation point, and dashes.
+
+    This file is part of www.CodeHiddenLanguage.com, a website
+        that accompanies the book "Code: The Hidden Language of 
+        Computer Hardware and Software," 2nd edition (Microsoft
+        Press, 2023) by Charles Petzold.
+    
+    This file is intended to show and describe basic JavaScript
+        code to display information about the computer on which the
+        program is running, specifically the screen size, date, and
+        time.
+
+    The HTML file typically beings with a DOCTYPE and an <html>
+        tag indicating the language of the file (English in this case).
+--><!doctype html>
+<html lang="zh-CN">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>编码：显示基本信息</title> 
+  <style>
+            body 
+            {
+                max-width: 40em;
+	            margin: 0 auto; 
+            }
+            h1
+            {
+                text-align: center;
+            }     
+        </style> 
+ </head> 
+ <body> 
+  <h1>显示基本信息</h1> 
+  <p>当前浏览器窗口运行的屏幕宽度为 <span id="screenWidth"></span> 像素，高度为 <span id="screenHeight"></span> 像素，方向为 <span id="screenOrientation"></span>。</p> 
+  <p>十六进制表示为：宽度 <span id="screenWidthHex"></span> 像素，高度 <span id="screenHeightHex"></span> 像素。</p> 
+  <p>可用屏幕区域(不包括菜单栏或任务栏)宽度为 <span id="availableScreenWidth"></span> 像素，高度为 <span id="availableScreenHeight"></span> 像素。</p> 
+  <p>浏览器窗口内可用内容区域宽度为 <span id="windowInnerWidth"></span> 像素，高度为 <span id="windowInnerHeight"></span> 像素。</p> 
+  <p>当前日期和时间：<span id="dateTime"></span></p> 
+  <p>当前日期：<span id="date"></span></p> 
+  <p>当前时间：<span id="time"></span></p> 
+  <p>根据您所在地区格式化的当前日期和时间：<span id="localeDateTime"></span></p> 
+  <p>根据您所在地区格式化的当前日期：<span id="localeDate"></span></p> 
+  <p>根据您所在地区格式化的当前时间：<span id="localeTime"></span></p> 
+  <p>当前小时：<span id="hour"></span>，分钟：<span id="minutes"></span>，秒：<span id="seconds"></span>，毫秒：<span id="milliseconds"></span>，星期：<span id="day"></span>(即<span id="dayOfWeek"></span>)，月份：<span id="month"></span>(即<span id="monthName"></span>)，日期：<span id="dayInMonth"></span>，年份：<span id="year"></span></p> 
+  <p>自1970年1月1日午夜以来的毫秒数：<span id="msecSince1970"></span>，约合<span id="yearsSince1970"></span>年</p> 
+  <p>人类首次登月日期：<span id="moonDate"></span>，即自1970年以来的<span id="msecMoonDate"></span>毫秒，约<span id="yearsSinceMoonLanding"></span>年前</p> 
+  <h2>要更新时间，请刷新页面！</h2> 
+  <!-- Finally, a copyright notice appears at the right bottom of the page. --> 
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+  <!-- JavaScript generally appears at the bottom of the <body> tag. 
+                This is usually a reference to a separate file with the 
+                extension .JS, but for this file, all the JavaScript is
+                included here within the <script> tags.
+        --> 
+  <script>
+            /* 
+                Multiline JavaScript comments can appear within delimiters
+                using the slash and asterisk.
+            */
+
+            // Single-line JavaScript comments are preceded by a double slash.
+
+            // This is a JavaScript statement that uses the 'var' keyword
+            //  to set a variable named 'scrWidth' to a the 'width' property
+            //  of the 'screen' property of the 'window' interface. This
+            //  information is provided by the Document Object Model (DOM)
+            //  associated with the webpage.
+            var scrWidth = window.screen.width;
+
+            // JavaScript statements are terminated with a semicolon.
+            
+            // JavaScript is case-sensitive: 'window.screen.width' must
+            //  be entirely in lowercase. Variables can be in whatever
+            //  case you want but they must be consistently spelled the same.
+
+            // Similarly, the variable 'scrWidthSpan' is set from the
+            //  'getElementbyId' method of the 'document' interface; the
+            //  'document' refers to this webpage. The text within 
+            //  parentheses is referred to as the method's argument and
+            //  in this case refers to text set to a <span> element's
+            //  'id' attribute.
+
+            var scrWidthSpan = document.getElementById("screenWidth");
+
+            // The number stored in the 'scrWidth' variable can be set
+            //  to the text in the 'scrWidthSpan' element by referencing
+            //  its 'innerHTML' property:
+
+            scrWidthSpan.innerHTML = scrWidth;
+
+            // You don't want to set 'scrWidth' directly to 'scrWidthSpan'
+            //  because 'scrWidth' is a number and 'scrWidthSpan' is an 
+            //  HTML <span> element.
+
+            // Rather than the 'var' keyword, many modern JavaScript 
+            //  programs use 'let' because it leads to fewer errors.
+            //  Here's a variable for the height of the screen:
+
+            let scrHeight = screen.height;
+
+            // Also notice that 'screen.height' can be used instead of
+            //  'window.screen.height' because the 'window' part is
+            //  assumed.
+
+            // Obtain the <span> element for display the screen height:
+
+            let scrHeightSpan = document.getElementById("screenHeight");
+
+            // Here's an alternative way of setting the inner HTML of
+            //  the <span> element from the 'scrHeight' variable:
+
+            scrHeightSpan.innerHTML = scrHeight.toString();
+
+            // HTML is entirely character strings, where s 'scrHeight'
+            //  is a number. JavaScript will automatically convert the
+            //  number to a string, but to have more control over this 
+            //  conversion, you can use the 'toString' method. Notice
+            //  that it's followed by a pair of empty parentheses.
+
+            // To avoid errors in your code, it's a good idea to keep
+            //  in mind which variables are numbers and which are strings.
+            
+            // It's also possible skip the variables entirely, and just
+            //  set information returned by the DOM directly to the
+            //  'innerHTML' property of the element returned by 
+            //  'getElementById'.
+
+            document.getElementById("screenOrientation").innerHTML = 
+                    "<b>" + screen.orientation.type + "</b>";
+
+            // The 'screen.orientation.type' property is a text string 
+            //  indicating whether the monitor is in landscape or portrait
+            //  mode.
+
+            // But look what else you can do! Because you're setting 
+            //  some HTML, you can include HTML tags, in this case
+            //  tags to boldface the text. When used with string, the
+            //  plus (+) operator concatenates strings, that is, 
+            //  sticks them together into one string.                    
+
+            // Two <span> elements are included in the next HTML paragraph
+            //  for displaying the screen width and height in hexadecimal.
+            //  These two statements obtain those <span> elements:
+
+            let scrWidthHexSpan = document.getElementById("screenWidthHex");
+            let scrHeightHexSpan = document.getElementById("screenHeightHex");
+
+            // Here's where the 'toString' method comes in very handy.
+            //  With an argument of 16, it converts the number to a 
+            //  string representing the number in hexadecimal:
+
+            scrWidthHexSpan.innerHTML = "0x" + scrWidth.toString(16);
+            scrHeightHexSpan.innerHTML = "0x" + scrHeight.toString(16);
+
+            // The strings have been prepended with "0x", which is the
+            //  prefix used in JavaScript to specify hexadecimal numbers.
+
+            // Here are twp statements to set two more <span> elements
+            //  to screen's available size, which excludes (for example)
+            //  the taskbar typically found at the bottom of screens,
+            //  and the Macintosh menu at the top of the screen.
+
+            document.getElementById("availableScreenWidth").innerHTML = 
+                        screen.availWidth;
+
+            document.getElementById("availableScreenHeight").innerHTML = 
+                        screen.availHeight;
+
+            // The inner width and height excludes browser overhead;
+
+            document.getElementById("windowInnerWidth").innerHTML = 
+                        window.innerWidth;
+
+            document.getElementById("windowInnerHeight").innerHTML = 
+                        window.innerHeight;
+
+            // To obtain the current date and time, you create a new 
+            //  JavaScript 'Date' object like so:
+
+            let dateTime = new Date();
+
+            // This 'dateTime' variable now contains a lot of information
+            //  You can display it directly to obtain a detailed text
+            //  description of the date and time:
+
+            document.getElementById("dateTime").innerHTML = dateTime;
+
+            // Or you can use a couple methods to break that down into 
+            //  the date and time components:
+
+            document.getElementById("date").innerHTML = dateTime.toDateString();
+            document.getElementById("time").innerHTML = dateTime.toTimeString();
+
+            // These are abbreviations of the date and time that are 
+            //  appropriate for your locale. These are probably the best
+            //  methods to use for displaying the date and time on a 
+            //  webpage:
+
+            document.getElementById("localeDateTime").innerHTML = 
+                        dateTime.toLocaleString();
+
+            document.getElementById("localeDate").innerHTML = 
+                        dateTime.toLocaleDateString();
+
+            document.getElementById("localeTime").innerHTML = 
+                        dateTime.toLocaleTimeString();
+
+            // All those methods with the word 'String' in them return 
+            //  strings. These methods return numbers:
+
+            const hour = dateTime.getHours();
+            const minute = dateTime.getMinutes();
+            const second = dateTime.getSeconds();
+            const msec = dateTime.getMilliseconds();
+
+            // Although 'var' or 'let' could be used here, 'const' is
+            //  used instead to indicate a constant, which is something
+            //  that will not change during the course of the program.
+
+            // Any variable that is only set once becomes a candidate
+            //  for being a constant, which aids the JavaScript compiler
+            //  in interpreting your code.
+
+            document.getElementById("hour").innerHTML = hour;
+            document.getElementById("minutes").innerHTML = minute;
+            document.getElementById("seconds").innerHTML = second; 
+            document.getElementById("milliseconds").innerHTML = msec;
+
+            // Other methods are available for obtaining UTC (Universal
+            //  Coordinate Time) rather than local time.
+
+            // The 'getDay' method returns the day of the week, where
+            //  0 is Sunday, 1 is Monday, ... and 6 is Saturday. 
+
+            const dayOfWeek = dateTime.getDay();
+
+            // The constant is named 'dayOfWeek' so as not to let us forget that!
+
+            // A <span> is available for displaying that number:
+
+            document.getElementById("day").innerHTML = dayOfWeek;
+
+            // But that number is not as explicit as it could be. Wouldn't it
+            //  be better to display the actual name of the day of the week?
+
+            // One way to do this is to define an array, which is a collection
+            //  of items generally of the same type. One way to define an 
+            //  array is JavaScript is with square brackets. The items go
+            //  between those square brackets separated by commas:
+
+            const daysOfWeek = [ "Sunday", "Monday", "Tuesday", "Wednesday", 
+                                 "Thursday", "Friday", "Saturday" ];
+
+            // Notice this array is named 'daysOfWeek' (plural) rather than
+            //  'dayOfWeek' (singular). 
+            // Now, any item in the array can be obtained by an operation 
+            //  called indexing the array, which is to follow the array
+            //  name with a number in square brackets. The indices begin
+            //  at zero.
+            // For example, daysOfWeek[2] is the string "Tuesday".
+
+            // This makes it easy to set a <span> with the English name of 
+            //  the week:
+
+            document.getElementById("dayOfWeek").innerHTML = 
+                        daysOfWeek[dayOfWeek];
+
+            // If you need to use other languages, there's a JavaScript 
+            //  object named 'Intl.DateTimeFormat' specifically for that
+            //  purpose.
+
+            // Let's do something similar for the month. The 'getMonth'
+            //  method returns a number starting at 0 for January, 
+            //  1 for February, ... and 11 for December:
+
+            const month = dateTime.getMonth();
+
+            // This array has the English names of the months:
+
+            let monthNames = [ "January", "February", "March", 
+                               "April", "May", "June", 
+                               "July", "August", "September", 
+                               "October", "November", "December" ];
+
+            // There's a <span> available for the numeric month:                               
+            document.getElementById("month").innerHTML = month;
+
+            // As well as the name of the month:
+            document.getElementById("monthName").innerHTML = 
+                        monthNames[month];
+
+            // The day of the month (starting at 1) is available from 
+            //  the 'getDate' method:
+
+            document.getElementById("dayInMonth").innerHTML = 
+                        dateTime.getDate();
+
+            // The year is available from the 'getYear' method, but it starts
+            //  at 1900, so 1900 needs to be added to the value:
+
+            document.getElementById("year").innerHTML = 
+                        1900 + dateTime.getYear();
+
+            // The 'getTime' method returns the number of milliseconds in
+            //  the epoch defined by JavaScript that begins at epoch beginning
+            //  on January 1, 1970:
+
+            const msecEpoch = dateTime.getTime();
+
+            // That number is displayed directly:
+
+            document.getElementById("msecSince1970").innerHTML = msecEpoch;
+
+            // But it also goes into a calculation that reveals the 
+            //  approximate number of years since 1970 rounded to two
+            //  decimal places:
+
+            document.getElementById("yearsSince1970").innerHTML = 
+                (msecEpoch / 1000 / 60 / 60/ 24 / 365.25).toFixed(2);
+
+            // A 'Date' object for any day can be obtained with arguments
+            //  to 'Date' for the year, months, and day:
+
+            const moonLanding = new Date(1969, 6, 20);
+
+            // A <scan> is available for that date to be displayed:
+
+            document.getElementById("moonDate").innerHTML = 
+                        moonLanding.toDateString();
+
+            // The number of milliseconds of the moon landing since 1970 is a 
+            //  negative number!
+
+            const msecMoonLanding = moonLanding.getTime();
+
+            document.getElementById("msecMoonDate").innerHTML = msecMoonLanding;
+
+            // Despite that negative value, it can still be used to calculate
+            //  the approximate number of years before the present:
+
+            document.getElementById("yearsSinceMoonLanding").innerHTML = 
+                ((msecEpoch - msecMoonLanding) 
+                    / 1000 / 60 / 60/ 24 / 365.25).toFixed(2);
+
+            // Notice how the parentheses clarify the order of operations:
+            //  Subtraction first, then the successive division, and the
+            //  entire result converted to a string with two decimal places.
+
+            // You'll notice that the time is not updated on the screen
+            //  unless you refresh the webpage. The JavaScript code is 
+            //  executed just once when the web browser loads the page.
+
+            // To update the screen after the webpage has been loaded,
+            //  events must be triggered and handled. That's in the 
+            //  next page.
+                           
+        </script>  
+ </body>
+</html>

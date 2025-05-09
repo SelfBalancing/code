@@ -1,0 +1,305 @@
+<!-- 
+    DrawCircles.html (c) Charles Petzold, 2024
+
+    This file is part of www.CodeHiddenLanguage.com, a website
+        that accompanies the book "Code: The Hidden Language of 
+        Computer Hardware and Software," 2nd edition (Microsoft
+        Press, 2023) by Charles Petzold.
+    
+    This file is intended to show and describe basic JavaScript
+    mouse processing and graphics drawing using the HTML5 
+    canvas element. 
+--><!doctype html>
+<html lang="en">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>Code: Draw Circles</title> 
+  <style>
+            body 
+            {
+                width: 700px;
+                margin: 0 auto; 
+            }
+
+            h1
+            {
+                text-align: center;
+            }
+
+            /* 
+                This style sheet contains two new items associated
+                with the HTML5 canvas element. 
+                
+                The canvas style gives the canvas a border, and
+                also sets the touch-action property to none.
+                Without this, the web browser will attempt to
+                scroll the page when touched on a touch screen.
+                Normally you want that except when a program 
+                (such as this one) uses touch movement itself.
+            */
+            canvas
+            {
+                border: 1px solid #000000;
+                touch-action: none;
+            }
+            /*    
+                This style is applied to the div that surrounds
+                the canvas. It sets its own size to the canvas
+                size, and then is centered on the page.
+            */
+            div.canvas-container
+            {
+                width: max-content;
+                margin: 0 auto;
+            }
+            
+        </style> 
+ </head> 
+ <body> 
+  <h1> Draw Circles </h1> 
+  <!-- This div contains the canvas. --> 
+  <div class="canvas-container"> 
+   <!-- The canvas element is typically given an explicit width and
+                    height. Customarily, a message is included for those
+                    browsers that don't support the canvas. --> 
+   <canvas width="600" height="600">
+     Your browser does not support the canvas element. 
+   </canvas> 
+  </div> 
+  <!-- Very brief instructions on how to use the program. --> 
+  <p style="text-align: center"> Use the mouse to draw circle: Press button, move, release.<br> To erase all circles, refresh the page. </p> 
+  <p style="text-align: right"> © 2024, <a href="https://www.charlespetzold.com">Charles Petzold</a> </p> 
+  <script>
+            // A JavaScript program that uses the canvas must get a reference 
+            //  to it. If the page has only a single canvas element, this is 
+            //  one way of doing it. Alternatively, the canvas could be given
+            //  an id, and document.getElementById could be used.
+            let canvas = document.querySelector("canvas");
+
+            // This is crucial! The variable (typically named ctx) is called
+            //  the graphics "context" and is obtained by the canvas. 
+            //  Currently, the only allowable argument to getContent is "2d"
+            //  referring to two-dimensional graphics.
+            //
+            // This ctx variable is used in every function used to draw on
+            //  the canvas or to specify attributes used in drawing. 
+            let ctx = canvas.getContext("2d");
+
+            // This program allows you to draw circles on the screen using 
+            //  the mouse. The program accumulates these circles (or rather,
+            //  the definition of these circles) in an array.
+            let circles = [];
+
+            // This variable saves a circle that is in the process of being 
+            //  drawn.
+            let currentCircle = undefined;
+
+            // This variable saves an ID number associated with the 
+            //  "pointer" which can refer to the mouse, fingers on a touch
+            //  screen, or a pen.
+            let pointerId = undefined;
+            
+            // Next are several functions.
+            //
+            // This one strokes a circle, which means to outline it without
+            //  filling it in. The arguments are the coordinates of the 
+            //  center of the circle and a radius. All coordinates are 
+            //  relative to the upper-left corner of the canvas. 
+            //  The x coordinates increase to the right and y coordinates
+            //  increase going down.
+            function strokeCircle(centerX, centerY, radius)
+            {
+                // Most of the canvas line drawing is done with a graphics
+                //  object called a "path." A path is a collection of 
+                //  straight lines and curves, some of which might be 
+                //  connected.
+                //
+                // A path always begins with a call to the beginPath
+                //  method of the graphics context.
+                ctx.beginPath();
+
+                // The arc method adds a curve to the path that is on
+                //  the circumference of a circle. The first two arguments
+                //  specify the center of this circle. The radius of the
+                //  circle follows. The next two arguments indicate that
+                //  the circle is drawn from angle 0 to angle 2π, which
+                //  is 360 degrees in radians, and hence defines a whole
+                //  circle.
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+
+                // The strokeStyle is an HTML color used to stroke graphics
+                //  figures. This is black.
+                ctx.strokeStyle = "#000000";
+
+                // The stroke method uses the strokeStyle to color the 
+                //  path.
+                ctx.stroke();
+            }
+
+            // This is a similar function except for filling a circle with
+            //  a particular color. The color is the fourth argument to
+            //  the function. 
+            function fillCircle(centerX, centerY, radius, color)
+            {
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+
+                // The fillStyle is set to an HTML color used to fill the
+                //  path.
+                ctx.fillStyle = color;
+
+                // The fill method fills the outline defined by the path. 
+                ctx.fill();
+            }
+
+            // This function updates the entire canvas.
+            function updateCanvas()
+            {
+                // It is common in modern graphics systems to retain enough
+                //  information to update the canvas at any time. That is
+                //  the responsibility of this function.
+                //
+                // Hence it begins by clearing the canvas of all previous 
+                //  drawings. The first two arguments specify the upper-left
+                //  corner of a rectangle to be cleared, and the second two
+                //  arguments specify the lower-right corner.
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Here's one way to loop through an array. The array name
+                //  (circles) comes first, followed by forEach. The argument
+                //  is a function with an argument that is an item in the
+                //  array, which is here named circle. That item is a 
+                //  JavaScript object with four properties that become the
+                //  four arguments to fillCircle. 
+                circles.forEach((circle) =>
+                    fillCircle(circle.centerX, circle.centerY, 
+                               circle.radius, circle.color));
+            }
+
+            // This function creates and returns a random color.
+            function randomColor()
+            {
+                // A random number is generated by the Math.random function.
+                //  This function returns a random floating-point number 
+                //  between 0 and 1. Then is then multiplied by 2 to the 24th
+                //  power, which is converted to a hexadecimal number with 
+                //  toString, and then padded to form a 6-character string
+                //  representing a hexadecimal number. A hash-sign is then
+                //  stuck on the beginning to put it in HTML format.
+                return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+            }
+
+            // The program concludes with three event listeners for the 
+            //  "pointer," which can be a mouse or a finger or a pen.
+            //
+            // The pointerdown event occurs when the mouse button is 
+            //  pressed when the mouse is over the canvas, or when a 
+            //  finger touches the canvas on a touchscreen.
+            canvas.addEventListener("pointerdown", (event) =>
+            {
+                // This event is ignored unless currentCircle is 
+                //  undefined, as it is when the program starts up.
+                if (currentCircle == undefined)
+                {
+                    // The event parameter has information about the
+                    //  event. The offsetX and offsetY properties 
+                    //  indicate where the mouse was located relative
+                    //  to the upper-left corner of the canvas. 
+                    // 
+                    // The currentCircle is set to a JavaScript object
+                    //  containing this information, as well as a radius
+                    //  of 0.
+                    currentCircle = { centerX : event.offsetX,
+                                      centerY : event.offsetY,
+                                      radius: 0 };
+
+                    // The pointerId is also saved. 
+                    //
+                    // When writing a program that handles multiple touch
+                    //  events (that is, multiple fingers moving on the
+                    //  screen at the same time, such as when pinching
+                    //  or zooming), the pointerId differentiates between
+                    //  the fingers in subsequent events. 
+                    //
+                    // In this program, subsequent pointer events with
+                    //  different IDs will be ignored. If that's not
+                    //  done, the program can get "confused" about 
+                    //  multiple touch events.  
+                    pointerId = event.pointerId;                                      
+                    
+                    // Calling setPointerCapture ensures that future
+                    //  pointer events are associated with the canvas 
+                    //  even if the mouse drifts outside the canvas.
+                    //  The argument is the pointer ID associated with the 
+                    //  event.
+                    canvas.setPointerCapture(pointerId);
+                }
+            });
+
+            // This event occurs when the mouse moves or when a finger is
+            //  dragged across the screen.
+            canvas.addEventListener("pointermove", (event)=>
+            {
+                // Ignore this event unless it has been preceded by a 
+                //  pointerDown event that has created a currentCircle
+                //  object and for which the pointer ID is the same.
+                if (currentCircle != undefined && pointerId == event.pointerId)
+                {
+                    // Calculate the distance between the current location
+                    //  of the mouse or finger (event.offsetX and event.offsetY)
+                    //  and the location when the mouse button (or finger) was
+                    //  first pressed.
+                    let radius = Math.sqrt(
+                        Math.pow(event.offsetX - currentCircle.centerX, 2) +
+                        Math.pow(event.offsetY - currentCircle.centerY, 2));
+
+                    // That's the radius of the current circle being drawn.
+                    currentCircle.radius = radius; 
+
+                    // Update the canvas to draw all previous circles by 
+                    //  calling updateCanvas.
+                    updateCanvas();
+
+                    // Draw the outline of the current circle by calling
+                    //  strokeCircle.
+                    strokeCircle(currentCircle.centerX, 
+                                 currentCircle.centerY, currentCircle.radius);
+                }
+            });
+
+            // This event occurs when the mouse pointer is released or when 
+            //  when a finger leaves the screen. 
+            canvas.addEventListener("pointerup", (event) =>
+            {
+                // Ignore the event unless currentCircle is defined and 
+                //  pointerId is the same as when the series of events began.
+                if (currentCircle != undefined && pointerId == event.pointerId)
+                {
+                    // Calculate the distance once last time.
+                    let radius = Math.sqrt(
+                        Math.pow(event.offsetX - currentCircle.centerX, 2) +
+                        Math.pow(event.offsetY - currentCircle.centerY, 2));
+
+                    // Set that radius to the object being drawn.
+                    currentCircle.radius = radius; 
+
+                    // Also set the color property to a random color.
+                    currentCircle.color = randomColor();
+
+                    // Add that circle the the array of circles.
+                    circles.push(currentCircle);
+
+                    // Update the canvas to draw all circles.
+                    updateCanvas();
+
+                    // Set the currentCircle and pointerId to undefined 
+                    //  values in preparation for the next mouse of touch
+                    //  event.
+                    currentCircle = undefined;
+                    pointerId = undefined;
+
+                }
+            });
+        </script>  
+ </body>
+</html>

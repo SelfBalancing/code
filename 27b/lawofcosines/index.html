@@ -1,0 +1,343 @@
+<!-- 
+    LawOfCosines.html (c) Charles Petzold, 2024
+
+    This file is part of www.CodeHiddenLanguage.com, a website
+        that accompanies the book "Code: The Hidden Language of 
+        Computer Hardware and Software," 2nd edition (Microsoft
+        Press, 2023) by Charles Petzold.
+    
+    This file demonstrates moving objects in a canvas in the
+    context of a use of the law of cosines to determine the
+    angles of a triangle knowing the sides. 
+--><!doctype html>
+<html lang="en">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>Code: Law of Cosines</title> 
+  <style>
+            body 
+            {
+                width: 700px;
+                margin: 0 auto; 
+            }
+
+            h1
+            {
+                text-align: center;
+            }
+
+            canvas
+            {
+                border: 1px solid #000000;
+                touch-action: none;
+            }
+
+            div.canvas-container
+            {
+                width: max-content;
+                margin: 0 auto;
+            }
+            
+        </style> 
+ </head> 
+ <body> 
+  <h1> Law of Cosines </h1> 
+  <div class="canvas-container"> 
+   <canvas width="600" height="600">
+     Your browser does not support the canvas element. 
+   </canvas> 
+  </div> 
+  <p style="text-align: center">使用鼠标拖动顶点来改变三角形形状</p> 
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+  <script>
+            let canvas = document.querySelector("canvas");
+            let ctx = canvas.getContext("2d");
+
+            // Often in a graphics program, it's convenient to work with 
+            //  'point' objects that contain x and y coordinates in one
+            //  handy variable. Interestingly, there are no 'point' objects
+            //  in the <canvas> interface. The closes is a 'DOMPoint'
+            //  object defined by the DOM.
+            //
+            // However, it's easy enough to make your own 'point' objects
+            //  using the JavaScript object facility. An object is 
+            //  defined with a pair of curly braces enclosing multiple
+            //  properties separated by commas and initialized following
+            //  colons. Here are three objects for the three vertices
+            //  of a triangle:
+
+            let vertexA = { x: 300, y: 100 };
+            let vertexB = { x: 100, y: 500 };
+            let vertexC = { x: 500, y: 500 };
+
+            // These three vertex objects are also stored in an array:
+
+            let vertices = [ vertexA, vertexB, vertexC ];
+
+            // As a vertex is dragged across the <canvas>, this 
+            //  variable will reference it:
+            
+            let draggedVertex = undefined;
+
+            // The pointerId associated with mouse events will also
+            //  be retained:
+
+            let pointerId = undefined;
+
+            // Several functions are defined here.
+
+            // The 'drawString' function displays a particular text
+            //  string on the canvas at a specified point, which
+            //  is assumed to be an object with 'x' and 'y' properties,
+            //  as shown in the call to the <canvas> 'fillText'
+            //  method. 
+            //
+            // The 'font' property indicates a font size and type,
+            //  the 'fillStyle' is the color of the text, and 
+            //  'textAlign' indicates how the text is horizontally
+            //  aligned relative to the point.
+
+            function drawString(string, point)
+            {
+                ctx.save();
+                ctx.font = "20px arial";
+                ctx.fillStyle = "red";
+                ctx.textAlign = "center";
+                ctx.fillText(string, point.x, point.y);
+                ctx.restore();
+            }
+
+            // This function draws a little circle. The center is
+            //  indicated by the function argument, and the radius
+            //  is fixed at 5 pixels. 
+
+            function drawVertex(vertex)
+            {
+                ctx.beginPath();
+                ctx.arc(vertex.x, vertex.y, 5, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+
+            // This function draws the vertex as well as a text
+            //  label at that point. 
+
+            function drawAndLabelVertex(vertex, string)
+            {
+                drawVertex(vertex);
+                drawString(string, vertex);
+            }
+
+            // A line is drawn on a <canvas> with a path using
+            //  a combination of 'moveTo' (the beginning of the
+            //  line) and 'lineTo' (the end of the line).
+
+            function drawLine(vertex1, vertex2)
+            {
+                ctx.beginPath();
+                ctx.moveTo(vertex1.x, vertex1.y);
+                ctx.lineTo(vertex2.x, vertex2.y);
+                ctx.stroke();
+            }
+
+            // This function calculates the length of a line
+            //  using the Pythagorean Theorem.
+
+            function lineLength(vertex1, vertex2)
+            {
+                return Math.sqrt(
+                    Math.pow(vertex1.x - vertex2.x, 2) +
+                    Math.pow(vertex1.y - vertex2.y, 2));
+            }
+
+            // This function display the length of a line
+            //  at the midpoint of the line.
+
+            function labelLine(vertex1, vertex2)
+            {
+                let length = lineLength(vertex1, vertex2);
+
+                let midPoint = { x: (vertex1.x + vertex2.x) / 2,
+                                 y: (vertex1.y + vertex2.y) / 2 };
+
+                drawString(length.toFixed(1).toString(), midPoint);                                               
+            }
+
+            // This function draws and labels the line
+
+            function drawAndLabelLine(vertex1, vertex2)
+            {
+                drawLine(vertex1, vertex2);
+                labelLine(vertex1, vertex2);
+            }
+
+            // This function implements the Law of Cosines. An angle
+            //  of a triangle is calculated based on the lengths of 
+            //  the two adjacent sides and the opposite side. 
+            //
+            // See https://en.wikipedia.org/wiki/Law_of_cosines
+            //  for details
+
+            function calculateAngle(adj1, adj2, opp)
+            {
+                let ratio = (adj1 * adj1 + adj2 * adj2 - opp * opp) / 
+                                (2 * adj1 * adj2)
+
+                // Notice the use of the arccos function!                                
+                let radians = Math.acos(ratio);
+                
+                // Convert radians to degrees.
+                return 180 * radians / Math.PI;
+            }
+
+            // This function draws everything using the functions
+            //  defined earlier.
+
+            function updateCanvas()
+            {
+                // The canvas is first cleared.
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Calculate the length of the three sides of the
+                //  triangle by calling lineLength.
+                let a = lineLength(vertexB, vertexC);
+                let b = lineLength(vertexA, vertexC);
+                let c = lineLength(vertexA, vertexB);
+
+                // Calculate the three angles based on the law of
+                //  cosines, and round to one decimal place.
+                let angleA = calculateAngle(b, c, a).toFixed(1);
+                let angleB = calculateAngle(a, c, b).toFixed(1);
+                let angleC = calculateAngle(a, b, c).toFixed(1);
+
+                // Draw and label the vertices. Note that the angles
+                //  have a degree sign appended!
+                drawAndLabelVertex(vertexA, angleA.toString() + '°');
+                drawAndLabelVertex(vertexB, angleB.toString() + '°');
+                drawAndLabelVertex(vertexC, angleC.toString() + '°');
+
+                // Draw and label the lines.
+                drawAndLabelLine(vertexA, vertexB);
+                drawAndLabelLine(vertexB, vertexC);
+                drawAndLabelLine(vertexC, vertexA);
+            }
+
+            // The remaining functions involve mouse processing:
+            //  When a mouse is clicked on one of the vertices, the
+            //  code allows that vertex to be moved.
+            //
+            // This requires a job called "hit-testing," which is
+            //  to determine if a mouse click coincides with a 
+            //  particular point.
+            //
+            // The point where the mouse is clicked is passed to
+            //  this function.
+
+            function hitTest(point)
+            {
+                let vertex = undefined;
+
+                // This 'for' statement loops through the three
+                //  items in the 'vertices' array.
+                for (let i = 0; i < vertices.length; i++)
+                {
+                    // If the line between the mouse point and the
+                    //  vertex is less than five pixels, it's a hit!
+                    if (lineLength(vertices[i], point) < 5)
+                    {
+                        // Save that vertex.
+                        vertex = vertices[i];
+
+                        // And break out of the loop
+                        break;
+                    }
+                }
+
+                // Now return that vertex.
+                return vertex;
+            }
+
+            // The onpointerdown handler
+            canvas.onpointerdown = (event) =>
+            {
+                // If we're not currently dragging a vertex.
+                if (draggedVertex == undefined)
+                {
+                    // Set 'point' equal to the mouse position
+                    let point = { x: event.offsetX, y: event.offsetY };
+
+                    // Call the 'hitTest' function with that point.
+                    let vertex = hitTest(point);
+
+                    // If the return value is not undefined,
+                    if (vertex != undefined)
+                    {
+                        // Set up for dragging.
+                        draggedVertex = vertex;
+                        pointerId = event.pointerId;
+                    }
+                }
+            }
+
+            // Handler for mouse movement. 
+            canvas.onpointermove = (event) =>
+            {
+                // If we're currently dragging a vertex...
+                if (draggedVertex != undefined && event.pointerId == pointerId)
+                {
+                    // Set the x and y properties of that vertex to 
+                    //  the mouse position.
+                    draggedVertex.x = event.offsetX;
+                    draggedVertex.y = event.offsetY;
+
+                    // Update the canvas.
+                    updateCanvas();
+                }
+            }
+
+            // The 'onpointerup' event is processed similarly
+            canvas.onpointerup = (event) =>
+            {
+                if (draggedVertex != undefined && event.pointerId == pointerId)
+                {
+                    draggedVertex.x = event.offsetX;
+                    draggedVertex.y = event.offsetY;
+
+                    // The exception is that dragging is halted by 
+                    //  setting these two variables to 'undefined'.
+                    draggedVertex = undefined;
+                    event.pointerId = undefined;
+
+                    updateCanvas();
+                }
+            }
+
+            // Although right at the end, this call to 'updateCanvas'
+            //  draws the initial triangle. All subsequent calls to 
+            //  'updateCanvas' occur in the mouse event handlers. 
+            updateCanvas();
+
+            // This program could be enhanced to shows the labels a 
+            //  little better. The labels for the vertices could be
+            //  always positioned outside the triangle, and the 
+            //  labels for the sides of the triangle could be 
+            //  positioned outside the triangle and parallel to 
+            //  the sides. 
+            //
+            // It wouldn't be easy but it could be done. 
+       
+        </script>  
+ </body>
+</html>

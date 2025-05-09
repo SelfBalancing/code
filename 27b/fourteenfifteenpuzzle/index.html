@@ -1,0 +1,589 @@
+<!-- 
+    FourteenFifteenPuzzle.html (c) Charles Petzold, 2024
+
+    This file is part of www.CodeHiddenLanguage.com, a website
+        that accompanies the book "Code: The Hidden Language of 
+        Computer Hardware and Software," 2nd edition (Microsoft
+        Press, 2023) by Charles Petzold.
+    
+    This if a JavaScript implementation of the famous
+    14-15 puzzle. See https://en.wikipedia.org/wiki/15_puzzle
+    for details.
+--><!doctype html>
+<html lang="zh-CN">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>编码：14-15数字拼图</title> 
+  <style>
+           body 
+            {
+                width: 500px;
+                margin: 0 auto; 
+            }
+
+            h1
+            {
+                text-align: center;
+            }            
+
+            div.canvas-container
+            {
+                width: max-content;
+                margin: auto;
+            }
+
+            canvas
+            {
+                border: 1px solid #000000;
+                margin: 0 10px;
+            }
+        </style> 
+ </head> 
+ <body> 
+  <h1>14-15数字拼图</h1> 
+  <div class="canvas-container"> 
+   <canvas width="480" height="480">
+     您的浏览器不支持canvas元素
+   </canvas> 
+  </div> 
+  <div style="margin: 25px auto; text-align: center;"> 
+   <button type="button" style="font-size:300%" onclick="randomizeTiles()">随机打乱</button> 
+   <p> 点击"随机打乱"按钮来打乱拼图。<br> 通过点击或轻触拼图块将它们移动到空白位置。<br> 目标是将拼图块按1到15的顺序重新排列。<br> </p> 
+  </div> 
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+  <script>
+            // As usual, get a reference to the <canvas> 
+            //  and get the graphics context.
+            let canvas = document.querySelector("canvas");
+            let ctx = canvas.getContext("2d");
+
+            // Width and height of each tile (will be 120 pixels).
+            const tileSize = canvas.width / 4;
+            
+            // The distance an animated tile shifts every 50th second.
+            const pixelShift = 20;      
+
+            // Create an empty array to store the tiles.
+            let tiles = [];
+
+            // These are the zero-based row and columns that is 
+            //  empty with no tile. 
+            let emptyRow = 3;
+            let emptyCol = 3;
+            
+            // Two Boolean variables to keep track of things.
+            let animationInProgress = false;
+            let tilesRandomized = false;
+
+            // This is a JavaScript class definition. A class is a way to
+            //  conveniently consolidate related code and variables.
+            //
+            // The code in a class are in "methods" that look and behave
+            //  a lot like functions except they are defined without
+            //  the 'function' keyword.
+            //
+            // Variables in a class are referred to as "properties." 
+            //
+            // The class itself is not an object. An instance of the
+            //  class must be created with the 'new' operator.
+            //
+            // When the class needs to refer to any of its own methods
+            //  or properties, they must be prefaced with the keyword
+            //  'this' and a period to refer the particular instance
+            //  of the class.
+
+            // There will be 15 instances of this class for the 
+            //  15 tiles.
+            class Tile 
+            {
+                // The 'constructor' method is executed when an 
+                //  instance of the class is first created with the
+                //  'new' operator. These arguments are passed to 
+                //  the class.
+                constructor(number, col, row, x, y) // , tileClicked)
+                {
+                    // This code saves all these parameters as its
+                    //  own properties prefaced by the 'this'.
+
+                    // The number displayed in the title.
+                    this.number = number;
+
+                    // The zero-based row and column of the tile.
+                    //  this changes as the game is played.
+                    this.col = col;
+                    this.row = row;
+
+                    // The initial graphics coordinates of the 
+                    //  upper-left corner of the tile. 
+                    this.x = x;
+                    this.y = y;
+
+                    // A method to execute when a tile is clicked.
+                    //  This method is outside the class because 
+                    //  it needs to refer to other tiles.
+      //              this.tileClicked = tileClicked;
+
+                    // Two properties to draw the tile. 
+                    this.border = 14;
+
+                    // A click event listener for the tile. This
+                    //  event listener is named 'onClick' but
+                    //  it must be followed by a 'bind' method
+                    //  required when referencing a class 
+                    //  method from outside the class.
+                    canvas.addEventListener("click", 
+                                        this.onClick.bind(this));
+                }
+
+                // The 'render' method draw the tile.
+                render()
+                {
+                    ctx.save();
+
+                    // The upper-left border of the tile is colored
+                    //  with a lightish gray to give the tile a 3D
+                    //  appearance.
+                    //
+                    // Notice that the coordinates passed to the 
+                    //  'moveTo' and 'lineTo' methods reference 
+                    //  'this.x' and 'this.y' which are the coordinates
+                    //  of the upper-left corner of this particular
+                    //  tile.
+                    ctx.beginPath();
+                    ctx.moveTo(this.x, this.y);
+                    ctx.lineTo(this.x + tileSize, this.y);
+                    ctx.lineTo(this.x + tileSize - this.border, this.y + this.border);
+                    ctx.lineTo(this.x + this.border, this.y + this.border);
+                    ctx.lineTo(this.x + this.border, this.y + tileSize - this.border);
+                    ctx.lineTo(this.x, this.y + tileSize);
+                    ctx.closePath();
+                    ctx.fillStyle = "#C0C0C0";
+                    ctx.fill();
+
+                    // Similarly, the lower-right border is colored
+                    //  with a darkish gray.
+                    ctx.beginPath();
+                    ctx.moveTo(this.x + tileSize, this.y + tileSize);
+                    ctx.lineTo(this.x + tileSize, this.y);
+                    ctx.lineTo(this.x + tileSize - this.border, this.y + this.border);
+                    ctx.lineTo(this.x + tileSize - this.border, this.y + tileSize - this.border);
+                    ctx.lineTo(this.x + this.border, this.y + tileSize - this.border);
+                    ctx.lineTo(this.x, this.y + tileSize);
+                    ctx.closePath();
+                    ctx.fillStyle = "#808080";
+                    ctx.fill();
+
+                    // The center of tile is colored a medium gray. 
+                    ctx.fillStyle = "#A0A0A0";
+                    ctx.fillRect(this.x + this.border, 
+                                this.y + this.border, 
+                                tileSize - 2 * this.border, 
+                                tileSize - 2 * this.border);
+
+                    // Display the number in the tile.
+                    let fontSize = Math.round(0.65 * tileSize);
+                    ctx.font = fontSize + "px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.fillStyle = "black";
+
+                    // These are set to the center of the tile.
+                    let x = this.x + tileSize / 2;
+                    let y = this.y + tileSize / 2 + 4;  // slightly adjusted
+                    ctx.fillText(this.number, x, y);
+
+                    ctx.restore();  
+                }
+
+                onClick(event)
+                {
+                    // If there's no animation in progress...
+                    if (!animationInProgress && 
+                        // Determine if the mouse was clicked within the
+                        //  boundaries of this tile
+                        event.offsetX > this.x && 
+                        event.offsetY > this.y &&
+                        event.offsetX < this.x + tileSize &&
+                        event.offsetY < this.y + tileSize)
+                    {
+                        // If the row of the clicked tile was also the
+                        //  empty row, then tiles can be shifted.
+                        if (this.row == emptyRow)
+                        {
+                            // But not if the column of the clicked tile
+                            //  was also the empty column.
+                            if (this.col < emptyCol)
+                            {
+                                // If the clicked column is less than 
+                                //  the empty column, shift right.
+                                // (That's what the last argument means.)
+                                shiftHorizontal(this.row, this.col, 1);
+                            }
+                            else if (this.col > emptyCol)
+                            {
+                                // If the clicked column is greater than
+                                //  the empty column, shift left (-1);
+                                shiftHorizontal(this.row, this.col, -1);
+                            }
+                        }
+
+                        // Similarly for vertical shifting
+                        else if (this.col == emptyCol)
+                        {
+                            if (this.row < emptyRow)
+                            {
+                                shiftVertical(this.row, this.col, 1);
+                            }
+                            else if (this.row > emptyRow)
+                            {
+                                shiftVertical(this.row, this.col, -1)
+                            }
+                        }
+
+                        // The 'shiftHorizontal' and 'shiftVertical' 
+                        //  functions are not part of the class because
+                        //  they access and manipulate the collection 
+                        //  of tiles.
+                        // They can be found further down this file.
+                    }
+                }
+            }
+
+            // These loops create the 'Tile' objects and initializes them. 
+            // This is run only once when the page loads.
+            for (let row = 0; row < 4; row++)
+            {
+                for (let col = 0; col < 4; col++)
+                {
+                    let number = 4 * row + col + 1;
+
+                    // Only create tiles number 1 to 15.
+                    if (number < 16)
+                    {
+                        let x = col * tileSize;
+                        let y = row * tileSize;
+                        let tile = new Tile(number, col, row, x, y);
+
+                        // Each tile is stored in the 'tiles' array
+                        tiles[4 * row + col] = tile;
+                    }
+                }
+            }
+
+            // Now display the initial screen using the function
+            //  shown immediately below this call.
+            renderAll();
+
+            // All the remaining code is in functions
+
+            // The 'renderAll' function display all the tiles.
+            function renderAll()
+            {
+                // First the background is colored white.
+                ctx.save();
+                ctx.fillStyle = "#FFFFFF";
+                ctx.fillRect(0, 0, 4 * tileSize, 4 * tileSize);
+                ctx.restore();
+
+                for (let row = 0; row < 4; row++)
+                {
+                    for (let col = 0; col < 4; col++)
+                    {
+                        // There is no tile in the emptyRow and
+                        //  emptyCol position.
+                        if (row != emptyRow || col != emptyCol)
+                        {
+                            // Call the render method in the 
+                            //  tile object.
+                            tiles[4 * row + col].render(); 
+                        }
+                    }
+                }
+            }
+        
+            // This function shifts tiles horizontally when a tile has
+            //  been clicked.
+            // It is complicated by two features:
+            //  1. Depending on what tile was clicked, it could be 
+            //      shifting 1, 2, or 3 tiles.
+            //  2. The shifting is animated.
+            function shiftHorizontal(clickedRow, clickedCol, direction)
+            {
+                // The column of the first tile that must be animated 
+                //  is adjacent to the empty column.
+                let animatedCol = emptyCol - direction;
+
+                // That tile is accessed from the 'tiles' array.
+                let animatedTile = tiles[4 * emptyRow + animatedCol];
+
+                // This is the x graphical coordinate of the tile.
+                let xStart = animatedTile.x;
+                
+                // Ignore mouse clicks while the animation is in progress.
+                animationInProgress = true;
+
+                // Here's the animation. The code within the brackets
+                //  is repeatedly executed until the animation is halted
+                //  by calling 'clearInterval' with the 'timer' return
+                //  value of setInterval
+                let timer = setInterval(() => 
+                {
+                    // The x coordinate of the animated tile is increased or
+                    //  decreased by the 'pixelShift' value (set at the 
+                    //  beginning of the program) but not so much that it
+                    //  goes beyond it's new position.
+                    if (direction == 1)
+                        animatedTile.x = Math.min(animatedTile.x + pixelShift, 
+                                                  xStart + tileSize);
+                    else
+                        animatedTile.x = Math.max(animatedTile.x - pixelShift, 
+                                                  xStart - tileSize);
+
+                    // Redraw all the tiles. 
+                    renderAll();
+
+                    // Check if the animation is at an end.
+                    if (animatedTile.x == xStart + direction * tileSize)
+                    {
+                        // If so, set the new 'col' property of the tile that's
+                        //  just been amimated.
+                        animatedTile.col = animatedCol + direction;
+
+                        // Save that in its new spot in the 'tiles' array.
+                        tiles[4 * clickedRow + animatedTile.col] = animatedTile;
+
+                        // Set the new 'emptyCol' property.
+                        emptyCol = animatedCol;
+
+                        // This code handles cases where multiple tiles are 
+                        //  being shifted by one click. 
+                        if (animatedCol != clickedCol)
+                        {
+                            // The column of the next animated tile is 
+                            //  determined and the tile is obtained.
+                            animatedCol -= direction;
+                            animatedTile = tiles[4 * emptyRow + animatedCol];
+
+                            // A new 'xStart' is obtained from that tile,
+                            //  and that tile is animated like the previous one.
+                            xStart = animatedTile.x;
+                        }
+                        else
+                        {
+                            // If we're done, stop the animation.
+                            clearInterval(timer);
+
+                            // Allow further mouse clicks.
+                            animationInProgress = false;
+
+                            // And check if the puzzle has bee completed.
+                            //  (This function is further down the file.)
+                            checkForSuccess();
+                            return;
+                        }
+                    }
+                }, 20);
+            }
+
+            // The 'shiftVertical' function is structured the same
+            //  as 'shiftHorizontal'.
+            function shiftVertical(clickedRow, clickedCol, direction)
+            {
+                let animatedRow = emptyRow - direction;
+                let animatedTile = tiles[4 * animatedRow + emptyCol];
+                let yStart = animatedTile.y;
+
+                animationInProgress = true;
+
+                let timer = setInterval(() =>
+                {
+                    // this is the code repeatedly executed
+
+                    if (direction == 1)
+                        animatedTile.y = Math.min(animatedTile.y + pixelShift, 
+                                                  yStart + tileSize);
+                    else
+                        animatedTile.y = Math.max(animatedTile.y - pixelShift, 
+                                                  yStart - tileSize);          
+                    
+                    renderAll();
+
+                    // Check if the animation is at an end
+                    if (animatedTile.y == yStart + direction * tileSize)
+                    {
+                        // If so, set new row of tile
+                        animatedTile.row = animatedRow + direction;
+                        tiles[4 * animatedTile.row + clickedCol] = animatedTile;
+                        emptyRow = animatedRow;
+
+                        if (animatedRow != clickedRow)
+                        {
+                            animatedRow -= direction;
+                            animatedTile = tiles[4 * animatedRow + emptyCol];
+                            yStart = animatedTile.y;
+                        }
+                        else
+                        {
+                            clearInterval(timer);
+                            animationInProgress = false;
+                            checkForSuccess();
+                            return;
+                        }
+                    }
+                }, 20);
+            }
+
+            // Back in the HTML, an event listener was set for the
+            //  'Randomize' button. This is it.
+            function randomizeTiles()
+            {
+                // Don't do this if a tile animation is in progress.
+                if (animationInProgress)
+                    return;
+
+                // Prepare for the animation. 
+                let repetitions = 300;
+                animationInProgress = true;
+
+                // Animate!
+                let timer = setInterval(() =>
+                {
+                    // Here's the existing empty row and column.
+                    let newEmptyRow = emptyRow;
+                    let newEmptyCol = emptyCol;
+
+                    // Find a random number from 0 through 3
+                    let random = Math.floor(4 * Math.random());
+
+                    // Use that to set a new empty row or column.
+                    switch (random)
+                    {
+                        case 0: newEmptyRow--; break;
+                        case 1: newEmptyRow++; break;
+                        case 2: newEmptyCol--; break;
+                        case 3: newEmptyCol++; break;
+                    }
+                    
+                    // If the new empty row and column is within the
+                    //  allowable bounds...
+                    if (newEmptyRow >= 0 && newEmptyRow < 4 &&
+                        newEmptyCol >= 0 && newEmptyCol < 4)
+                    {
+                        // Get the tile currently there.
+                        let tile = tiles[4 * newEmptyRow + newEmptyCol];
+
+                        // Set new tile row, col, y, and x properties
+                        tile.row = emptyRow;
+                        tile.col = emptyCol;
+                        tile.y = tile.row * tileSize;
+                        tile.x = tile.col * tileSize;
+
+                        // Save the modified tile in its new spot.
+                        tiles[4 * tile.row + tile.col] = tile;
+
+                        // Set the new empty row and column
+                        emptyRow = newEmptyRow;
+                        emptyCol = newEmptyCol;
+
+                        // And re-render the entire grid.
+                        renderAll();
+
+                        // If there have been 300 repetitions...
+                        if (--repetitions == 0)
+                        {
+                            // Stop the animation.
+                            clearInterval(timer);
+                            animationInProgress = false;
+                            return;
+                        }
+                    }
+                }, 10);
+
+                // Indicate that the tiles have been randomized.
+                tilesRandomized = true;
+            }
+
+            // This is called after every tile move. 
+            function checkForSuccess()
+            {
+                // Check if the tiles have been randomized
+                if (!tilesRandomized)
+                    return;
+
+                // Check if the empty row and column is the 
+                //  lower-right square.
+                if (emptyRow != 3 || emptyCol != 3)
+                    return;
+
+                // Loop through the 15 tiles in the array.
+                for (let index = 0; index < 15; index++)
+                {
+                    // If the number indicates the tiles 
+                    //  are out of order, return from this 
+                    //  function.
+                    if (tiles[index].number != index + 1)
+                        return;
+                }
+
+                // Initialize for another animation.
+                let angle = 0;
+                let angleIncrease = 1;
+                animationInProgress = true;
+
+                // Start the animation.
+                let timer = setInterval(() =>
+                {
+                    // Render the entire grid of tiles.
+                    renderAll();
+
+                    // Set a transform.
+                    ctx.save();
+                    ctx.translate(2 * tileSize, 2 * tileSize);
+                    ctx.rotate(angle * Math.PI / 180);
+                    ctx.scale(1, 3);
+
+                    // Set up a font and display some text,
+                    ctx.font = "bold " + (tileSize / 3) + "px san-serif";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.fillStyle = "Red";
+                    ctx.fillText("CONGRATULATIONS!", 0, 0);
+                    ctx.restore();
+
+                    // Modify the angle used for the animation.
+                    angle += angleIncrease;
+
+                    // And modify the value used to modify the angle.
+                    if (angleIncrease < 358)
+                        angleIncrease *= 1.01;
+                    else
+                        angleIncrease *= 1.0000125;            
+
+                    if (angleIncrease >= 360)
+                    {
+                            // End the animation 
+                            renderAll();
+                            clearInterval(timer);
+                            tilesRandomized = false;
+                            animationInProgress = false;
+                            return;
+                    }
+                }, 20);
+            }
+
+        </script>  
+ </body>
+</html>

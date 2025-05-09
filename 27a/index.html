@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="zh">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>15 汇编语言</title> 
+  <link rel="stylesheet" href="css/style.240618.css"> 
+  <style>
+            html,body{height:100%}
+
+
+            label { width: 100px; float: left}
+            label:after { content: ": "}
+            #slider { width: 375px;}
+            form { width: 600px; margin: 0 auto; }
+
+            textarea
+            {
+                display: block;
+            }
+/*
+            dialog
+            {
+                position: absolute;
+                left: 0px;
+                top: 0px;
+            }
+*/
+            .menu
+            {
+                position: relative;
+                display: inline-block;
+            }
+
+            .submenu 
+            {
+                display: none;
+                position: absolute;
+                z-index: 1;
+                background-color: #f0f0f0;
+            }
+/*
+            .menu:hover .submenu
+            {
+                display: block;
+            }
+*/
+            .mainMenuItem
+            {
+                min-width: 80px;
+                text-align: left;
+                background-color: transparent;
+                border: none;
+            }
+
+            .subMenuItem
+            {
+                min-width: 120px;
+                text-align: left;
+                background-color: transparent;
+                border: none;
+                margin-left:10px;
+            }
+
+            .subMenuItem:hover
+            {
+                background-color: #e0e0e0;
+            }
+/*
+            .dlgbox
+            {
+                display: none;
+                position: absolute;
+                width: 40em;
+                height: fit-content;
+                border: 2px solid black;
+                background-color: cyan;
+                margin-left: 20px;
+                margin-top: 50px;
+                padding: 10px;
+            }
+*/
+        </style> 
+ </head> 
+ <body> 
+  <header> 
+   <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br></h1> 
+   <h2>15 汇编语言</h2> 
+  </header> 
+  <div class="narrative"> 
+   <p> 此页面关于编写计算机程序的活动，通常被称为软件工程、编程或编码。</p> 
+   <p> 描述了两种编码类型：基于Intel 8080处理器的汇编语言编程，以及<a href="../Chapter27b">使用JavaScript的高级编程</a>（另一页面）。</p> 
+  </div> 
+  <h3>8080汇编语言编程</h3> 
+  <div class="narrative"> 
+   <p> 这是一个用JavaScript编写的Intel 8080微处理器模拟器。它有四个主要组件：</p> 
+   <ul> 
+    <li>一个<b>Editor</b>用于输入、编辑和保存汇编语言程序</li>
+    <li>一个带注释的<b>Memory</b>块，用于显示汇编后的机器码</li>
+    <li><b>CPU</b>模拟器，允许您运行程序或单步执行指令</li>
+    <li>一个<b>Console</b>用于显示程序输出和读取键盘输入</li>
+   </ul> 
+   <p> 这些组件将在本页下方进一步描述。</p> 
+  </div> 
+  <!-- Editor --> 
+  <div style="margin: auto; border-style: solid; width: fit-content"> 
+   <h4 id="editorTitlebar" style="margin: 0px;"> Editor - Untitled </h4> 
+   <div class="menu"> 
+    <button id="menuFile" class="mainMenuItem">File</button> 
+    <div id="fileSubmenu" class="submenu"> 
+     <button class="subMenuItem" id="fileNew">New</button> 
+     <button class="subMenuItem" id="fileOpen">Open...</button> 
+     <button class="subMenuItem" id="fileSave">Save</button> 
+     <button class="subMenuItem" id="fileSaveAs">Save As...</button> 
+     <hr> 
+     <button class="subMenuItem" id="fileInsert">Insert file...</button> 
+     <button class="subMenuItem" id="fileSaveSelection">Save selection...</button> 
+    </div> 
+   </div> 
+   <!-- Query File Save Dialog --> 
+   <dialog id="queryFileSaveDialog"> 
+    <p>Do you want to save changes to <span id="queryFileSaveFilename"></span></p> 
+    <div style="text-align:right"> 
+     <button id="queryFileSaveSaveButton" autofocus="true">Save</button> 
+     <button id="queryFileSaveDontButton">Don't Save</button> 
+     <button id="queryFileSaveCancelButton">Cancel</button> 
+    </div> 
+   </dialog> 
+   <!-- File Open / Save Dialog --> 
+   <dialog id="fileDialog"> 
+    <div style="display: grid; grid-template-columns: 175px 175px 175px 175px"> 
+     <p id="dialogHeader" style="grid-column: 1 / span 4; grid-row: 1; margin-top: 0px; font-size: 125%; font-weight: bold"> Open / Save As </p> 
+     <select id="filelist" style="grid-column: 1 / 3; grid-row:2" size="18"></select> 
+     <div id="filedesc" style="grid-column: 3 / span 2; grid-row: 2; margin: 5px"></div> 
+     <div style="grid-column: 1 / 4; grid-row: 3; margin-top: 10px"> 
+      <!-- TODO: Label has style set above! --> 
+      <label>File name:</label> 
+      <input id="filename" size="50"> 
+     </div> 
+     <div id="readOnlyWarning" style="grid-column: 1 / 4; grid-row: 4; color:Red; visibility: hidden; position: relative; margin-top: 5px">
+       File is read-only. Choose another file name. 
+      <div id="fileNotFoundWarning" style="color:Red; visibility: hidden; position: absolute; top: 0; left: 0">
+        File not found. Choose another file name. 
+      </div> 
+     </div> 
+     <div style="grid-column: 3 / 5; grid-row: 4; text-align: right"> 
+      <button id="dlgOpenSaveButton">Open / Save</button> 
+      <button id="dlgCancelButton">Cancel</button> 
+     </div> 
+    </div> 
+   </dialog> 
+   <textarea id="asmeditbox" rows="24" cols="100" spellcheck="false" wrap="off" style="display: block; margin: auto;" autofocus></textarea> 
+   <!-- Query Overwrite Dialog --> 
+   <dialog id="queryOverwriteDialog"> 
+    <p> "<span id="queryOverwriteFilename"></span>" already exists.<br> Do you want to replace it? </p> 
+    <div style="text-align:right"> 
+     <button id="queryOverwriteYesButton" autofocus="true">Yes</button> 
+     <button id="queryOverwriteNoButton">No</button> 
+    </div> 
+   </dialog> 
+  </div> 
+  <!-- Assemble button and error message --> 
+  <div style="width: 40em; display:block; margin:auto"> 
+   <button type="button" id="assembleBtn" style="font-size: larger; display: block; margin-left: auto; margin-right: auto; margin-top: 10px" disabled>Assemble</button> 
+   <div style="display:block"> 
+    <p id="errorMessage" style="color: red; text-align: center"> &nbsp; </p> 
+   </div> 
+  </div> 
+  <div style="max-width: 60em; margin: auto; display: flex; justify-content: space-between"> 
+   <!-- Memory --> 
+   <div style="display: inline-block;"> 
+    <h4> Memory </h4> 
+    <select id="codelist" size="16" style="font-family: monospace, monospace; width: 24em"></select> 
+   </div> 
+   <!-- CPU --> 
+   <div style="display: inline-block;"> 
+    <h4> CPU </h4> 
+    <table> 
+     <tbody>
+      <tr>
+       <td colspan="2">PC = </td>
+       <td colspan="2" id="pc">0000h</td>
+      </tr> 
+      <tr>
+       <td colspan="2">SP = </td>
+       <td colspan="2" id="sp">0000h</td>
+      </tr> 
+      <tr>
+       <td colspan="4"></td>
+      </tr> 
+      <tr>
+       <td>A</td>
+       <td id="a">00h</td>
+       <td id="f">00h</td>
+       <td>Flags</td>
+      </tr> 
+      <tr>
+       <td>B</td>
+       <td id="b">00h</td>
+       <td id="c">00h</td>
+       <td>C</td>
+      </tr> 
+      <tr>
+       <td>D</td>
+       <td id="d">00h</td>
+       <td id="e">00h</td>
+       <td>E</td>
+      </tr> 
+      <tr>
+       <td>H</td>
+       <td id="h">00h</td>
+       <td id="l">00h</td>
+       <td>L</td>
+      </tr> 
+      <tr>
+       <td colspan="4"></td>
+      </tr> 
+      <tr>
+       <td>Flags</td>
+       <td colspan="3" id="flags"></td>
+      </tr> 
+     </tbody>
+    </table> 
+    <div style="display: flex; justify-content: space-evenly; padding-top:10px"> 
+     <button type="button" id="stepButton">Step</button> 
+     <button type="button" id="runButton">Run</button> 
+     <button type="button" id="breakButton">Break</button> 
+     <button type="button" id="resetButton">Reset</button> 
+    </div> 
+   </div> 
+   <!-- Console --> 
+   <div style="display: inline-block;"> 
+    <h4>Console</h4> 
+    <textarea id="consoleTextBox" rows="16" cols="40" spellcheck="false"></textarea> 
+    <button id="clearConsoleButton" style="display: block; margin: 10px auto 0; ">Clear</button> 
+   </div> 
+  </div> 
+  <div class="narrative"> 
+   <p> 以下部分描述了这个模拟器的各个组件。</p> 
+   <h4> Editor </h4> 
+   <p> <b>Editor</b>是多行编辑器应用程序的精简版本，如Windows记事本或macOS TextEdit。您可以在此创建与Intel 8080汇编语言兼容的程序。该语言不区分大小写：您可以用大写、小写或混合形式输入程序。</p> 
+   <p> <b>File</b>菜单提供选项来清除<b>Editor</b>内容以开始新文件、打开现有文件和保存文件。这些菜单选项会调用熟悉的对话框。</p> 
+   <p> 这个模拟文件系统使用JavaScript的<b>localStorage</b>功能。您存储的文件对此特定网页和您正在使用的特定浏览器是私有的。换句话说，如果您在一个浏览器上运行此页面时保存文件，在使用另一个浏览器时将无法看到它们。您可以在浏览器之间传输这些文件，或者通过将它们从<b>Editor</b>复制到剪贴板来将这些文件保存在其他地方。</p> 
+   <p> 除了打开和保存整个文件外，您还可以通过选择文本块并从菜单中选择<b>Save selection</b>来保存文件片段。您可以通过选择<b>Insert file</b>将片段插入现有文件中。这些功能旨在保存和检索方便的子程序。</p> 
+   <p style="border: solid red; padding: 5px"> <b><span style="color:red">警告：</span></b> 尽管此编辑器使用典型的消息框警告来帮助您避免覆盖现有文件，或者在文件保存之前擦除文件，但如果刷新或关闭网页，它<b><span style="color:red">不会</span></b>警告您可能会丢失编辑内容。</p> 
+   <p> 有几个文件已预先存储。这些包括书中所有的汇编语言程序，以及其他几个程序。这些文件在<b>File Open</b>对话框中有描述。它们是只读文件。您可以在<b>Editor</b>中修改它们，但除非您选择<b>Save As</b>选项指定不同的文件名，否则无法保存它们。</p> 
+   <p> 您的程序允许的语法通常是1975年出版的<i>Intel 8080 Assembly Language Programming Manual</i>中描述的语法，可在<a href="https://archive.org/details/intel-8080-assembly-language-programming-manual-1975">Internet Archive</a>上找到，但有一些规定和例外：</p> 
+   <ul> 
+    <li> 不支持IN、OUT、EI和DI指令，因为此模拟没有输入或输出端口，也没有要启用或禁用的中断。</li> 
+    <li> 引用寄存器对的指令可以使用手册中指示的B、D和H，或者为了清晰起见使用BC、DE和HL。</li> 
+    <li> 不支持使用$表示当前程序计数器(第10页)。不支持使用数字表示寄存器(第10页)。</li> 
+    <li> 支持ORG、END、EQU、DB、DW和DS指令，但不支持SET。不支持条件汇编和宏。</li> 
+   </ul> 
+   <p> 请注意，以字母开头的十六进制数字必须以零开头。否则，汇编器可能会将它们误认为标签。</p> 
+   <p> 可用的程序中有一个名为<b>Test Suite</b>的程序，它是1980年的版权，旨在测试模拟的8080处理器。该程序在此模拟器上汇编并运行，对测试它特别有用。</p> 
+   <p> 如果程序包含ORG语句，导致汇编程序从地址100h开始执行，则通过<code>CALL 5</code>接口支持五个CP/M调用：</p> 
+   <ul> 
+    <li> <b>结束执行：</b> 将寄存器C设置为0并<code>CALL 5</code>。</li> 
+    <li> <b>控制台输入：</b> 将寄存器C设置为1并<code>CALL 5</code>。返回时，A和L寄存器都包含在<b>Console</b>窗口中键入的字符。</li> 
+    <li> <b>控制台输出：</b> 将寄存器C设置为2，寄存器E设置为ASCII字符。该字符将出现在<b>Console</b>窗口中。</li> 
+    <li> <b>输出字符串：</b> 将寄存器C设置为9，DE寄存器对设置为以美元符号($)结尾的字符串地址。美元符号之前(但不包括)的字符显示在<b>Console</b>窗口中。</li> 
+    <li> <b>缓冲控制台输入：</b> 将寄存器C设置为10(十六进制0Ah)，寄存器对DE设置为内存区域，其第一个字节是缓冲区的长度。返回时，缓冲区将包含键盘键入的字符，最多为该长度，第一个字节将是实际长度。</li> 
+   </ul> 
+   <p> 文件中包含的<b>Test CP/M Console Calls</b>程序演示了所有这些函数调用。</p> 
+   <p> CP/M程序可以通过几种方式终止：通过寄存器C设置为零的<code>CALL 5</code>；通过JMP或CALL到地址0000h；或通过RST 0。当CP/M程序开始执行时，地址0000h已被推入堆栈，因此它也可以通过RET指令终止。</p> 
+   <h4> Memory </h4> 
+   <p> 打开或键入程序后，您可以按<b>Assemble</b>按钮。代码中的任何错误都以红色显示在该按钮下方。</p> 
+   <p> 如果文件成功汇编，地址和机器码将显示在<b>Memory</b>框中。为方便起见，右侧显示相应的指令。</p> 
+   <p> 此显示在执行代码时很有帮助：<b>Memory</b>显示中的代码行在执行时会高亮显示。</p> 
+   <h4> CPU </h4> 
+   <p> 此表显示CPU的状态，包括程序计数器(PC)、堆栈指针(SP)、寄存器A、B、C、D、E、H、L和标志。</p> 
+   <p> 提供四个按钮：</p> 
+   <ul> 
+    <li> <b>Step：</b> 执行程序中的下一条语句。</li> 
+    <li> <b>Run：</b> 以每秒100条指令的速度连续执行程序，直到程序自行停止。</li> 
+    <li> <b>Break：</b> 仅在程序连续运行时启用。停止执行。</li> 
+    <li> <b>Reset：</b> 将程序计数器和堆栈指针重置为其初始状态。如果要恢复内存内容，请按<b>Assemble</b>按钮。</li> 
+   </ul> 
+   <p> * 原始的Intel 8080运行在2 Mhz。各种指令(包括从内存获取指令)需要最少4个时钟周期，最多11个。指令执行速度约为每秒200,000到500,000条。</p> 
+   <h4> Console </h4> 
+   <p> <b>Console</b>显示程序的输出，并允许您为程序键入输入。当进行CP/M调用以接收键盘输入时，它应该获得输入焦点，但如果没有，只需单击它然后键入。可以用<b>Clear</b>按钮清除它。</p> 
+  </div> 
+  <hr> 
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+  <script src="js/TestSuite.asm.js"></script> 
+  <script src="js/TestSuiteLowerCase.asm.js"></script> 
+  <script src="js/LocalStorageLib.240618.js"></script> 
+  <script src="js/I8080Emulator.240618.js"></script> 
+  <script src="js/I8080Assembler.240618.js"></script> 
+  <script src="js/EmulatorEditor.240618.js"></script> 
+  <script src="js/EmulatorEditorMenu.240618.js"></script> 
+  <script src="js/EmulatorMemory.240618.js"></script> 
+  <script src="js/EmulatorCPU.240618.js"></script> 
+  <script src="js/EmulatorConsole.240618.js"></script> 
+  <script src="js/EmulatorConnections.240618.js"></script>  
+ </body>
+</html>

@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="zh-CN">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>编码：事件处理</title> 
+  <style>
+            body 
+            {
+                max-width: 40em;
+	            margin: 0 auto; 
+            }
+            h1
+            {
+                text-align: center;
+            }
+            button
+            {
+                display: block;
+                font-size: 200%; 
+                margin: 0 auto;
+            }   
+        </style> 
+ </head> 
+ <body> 
+  <h1>事件处理</h1> 
+  <p>这里展示了几个演示事件处理的程序。</p> 
+  <h2>点击计数器</h2> 
+  <button id="clickCountingButton">点击按钮！</button> 
+  <br> 
+  <div style="display: flex; justify-content: space-around"> 
+   <p id="buttonClicks1">0</p> 
+   <p id="buttonClicks2">0</p> 
+   <p id="buttonClicks3">0</p> 
+   <p id="buttonClicks4">0</p> 
+   <p id="buttonClicks5">0</p> 
+  </div> 
+  <p>要重置计数，请刷新页面。</p> 
+  <h2>当前日期和时间</h2> 
+  <p id="dateAndTime" style="text-align: center">&nbsp;</p> 
+  <h2>票务计算</h2> 
+  <div style="display: grid; grid-template-columns: 400px 100px; width: 500px; margin: 0 auto;"> 
+   <div style="grid-row: 1; grid-column: 1; margin: auto 0;"> 
+    <label for="adultTickets">成人票数量(单价$25.00)：</label> 
+    <input type="number" id="adultTickets" value="0" min="0" max="10"> 
+   </div> 
+   <div style="grid-row: 1; grid-column: 2; margin: auto 0;"> 
+    <p id="adultTotal" style="text-align:right">$0.00</p> 
+   </div> 
+   <div style="grid-row: 2; grid-column: 1; margin: auto 0;"> 
+    <label for="childTickets">儿童票数量(单价$10.00)：</label> 
+    <input type="number" id="childTickets" value="0" min="0" max="10"> 
+   </div> 
+   <div style="grid-row: 2; grid-column: 2; margin: auto 0;"> 
+    <p id="childTotal" style="text-align: right">$0.00</p> 
+   </div> 
+   <div style="grid-row: 3; grid-column: 1; margin: auto 0;"> 
+    <label for="seniorTickets">老人票数量(单价$20.00)：</label> 
+    <input type="number" id="seniorTickets" value="0" min="0" max="10"> 
+   </div> 
+   <div style="grid-row: 3; grid-column: 2; margin: auto 0;"> 
+    <p id="seniorTotal" style="text-align:right">$0.00</p> 
+   </div> 
+   <div style="grid-row: 4; grid-column: 1 / 3; margin: auto 0;"> 
+    <hr> 
+   </div> 
+   <div style="grid-row: 5; grid-column: 1; margin: auto 0;"> 
+    <label>总计：</label> 
+   </div> 
+   <div style="grid-row: 5; grid-column: 2; margin: auto 0;"> 
+    <p id="totalTotal" style="text-align:right">$0.00</p> 
+   </div> 
+  </div> 
+  <h2>埃拉托斯特尼筛法</h2> 
+  <p>这是《编码》第439-440页描述的埃拉托斯特尼筛法实现，用于枚举质数。最大数值限制为100000。</p> 
+  <div> 
+   <label for="maxPrime">计算质数的上限(不包括该数)：</label> 
+   <input type="number" id="maxPrime" value="1000" min="3" max="100000"> 
+  </div> 
+  <button id="primeGoButton" style="margin-top: 50px;">开始计算</button> 
+  <p id="primeResults"></p> 
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+  
+  <script>
+
+            // ----------------
+            // Count the Clicks
+            // ----------------
+
+            // Get references to all five <p> elements used to display
+            //  the number of button clicks.
+            let buttonClicks1 = document.getElementById("buttonClicks1");
+            let buttonClicks2 = document.getElementById("buttonClicks2");
+            let buttonClicks3 = document.getElementById("buttonClicks3");
+            let buttonClicks4 = document.getElementById("buttonClicks4");
+            let buttonClicks5 = document.getElementById("buttonClicks5");
+
+            // This code obtains a reference to the <button> element.
+            let clickCountingButton = 
+                    document.getElementById("clickCountingButton");
+
+            // This following is a function. 
+            //
+            // The function is the primary organizational element of
+            //  JavaScript programs. A function performs a
+            //  particular task, possibly returning the result of a 
+            //  calculation or other activity. By enclosing code in
+            //  a function, it can be invoked multiple times.
+            //
+            // A function begins with the word 'function' followed by
+            //  the name of the function. Parentheses follow to 
+            //  specify parameters passed to the function.
+            //
+            // The body of the function is enclosed between curly braces.
+            //
+            // This particular function will serve as an event 
+            //  listener, so the single parameter is called 'event'.
+
+            function addAnotherClick1(event)
+            {
+                // This function will be called every time the 
+                //  button is clicked. It first obtains the 
+                //  number in the first <p> element. 
+                // The JavaScript parseInt function converts
+                //  the string to an integer.
+                let count = parseInt(buttonClicks1.innerHTML);
+
+                // The new value of 'count' equals the old value plus 1.
+                count = count + 1;
+
+                // That new count is stored back in the <p> element.
+                buttonClicks1.innerHTML = count.toString();
+            }
+
+            // Here's how the 'addAnotherClick1' method is attached to the
+            //  <button> element. The 'addEventListener' method is called
+            //  on the <button>. The "click" event is specified, and 
+            //  the above method is indicated.
+            clickCountingButton.addEventListener("click", addAnotherClick1);
+
+            // Now, whenever the button is clicked, the 'addAnotherClick1'
+            //  function is called.
+
+            // It is not necessary to define a function before it is used.
+
+            // This code adds another "click" event listener but this time
+            //  the function is specified directly in the 'addEventListener'
+            //  method. The word 'function' is followed by the 'event'
+            //  parameter in parentheses.
+            clickCountingButton.addEventListener("click", function(event)
+            {
+                // The code references the second <p> element.
+                let count = parseInt(buttonClicks2.innerHTML);
+
+                // A shortcut notation adds 1 to the value of 'count'.
+                count += 1;
+                buttonClicks2.innerHTML = count.toString();
+            });
+
+            // Notice that the function ends with a right curly brace AND 
+            //  a right parenthesis. That parenthesis for the 
+            //  'addEventListener' method. 
+
+            // The 'count' variables in the two event handlers are separate
+            //  and distinct. They are only valid within the function.
+
+            // Here's yet another technique for specifying a function
+            //  in the 'addEventListener' call: The 'event' parameter
+            //  in parentheses is followed by => and then the body of
+            //  the function. This is known as an arrow function and
+            //  has some limitations compared with traditional 
+            //  function definitions.
+            clickCountingButton.addEventListener("click", (event) =>
+            {
+                let count = parseInt(buttonClicks3.innerHTML);
+
+                // Another shortcut: 'count' is incremented by 1
+                count++;
+                buttonClicks3.innerHTML = count.toString();
+            });
+
+            // Rather than call 'addEventListener' with a "click"
+            //  parameter, you can set the 'onclick' event of the
+            //  button to a function, here specified with the 
+            //  'function' keyword.
+            clickCountingButton.onclick = function (event)
+            {
+                let count = parseInt(buttonClicks4.innerHTML);
+                count++;
+                buttonClicks4.innerHTML = count.toString();
+            }
+
+            // But that function won't be called because the 
+            //  following code replaces the 'onclick' event with
+            //  an arrow function:
+            clickCountingButton.onclick = (event) =>
+            {
+                let count = parseInt(buttonClicks5.innerHTML);
+                count = count + 1;
+                buttonClicks5.innerHTML = count.toString();
+            };
+
+            // You can add as many even listeners as you want using the 
+            //  'addEventListener' method, but when setting the event
+            //  directly, you can only have one.
+
+            // It is possible to set the 'onclick' event directly in 
+            //  the HTML for the <button> but this practice is 
+            //  discouraged. It's best to keep HTML and JavaScript
+            //  separate and distinct. 
+
+            // ---------------------
+            // Current Date and Time
+            // ---------------------
+
+            // The JavaScript setInterval function performs animation. It has
+            //  two arguments. The first is a function that is called a 
+            //  a particular rate of time. The second argument is that time
+            //  in milliseconds.
+
+            setInterval(
+                () => document.getElementById("dateAndTime").innerHTML = new Date(),
+                1000);
+
+            // Every 1000 milliseconds (one second), a function is called
+            //  that creates a new 'Date' object and sets it to the inner HTML
+            //  of the <p> element with an id of "dateAndTime".
+
+            // ------------------
+            // Ticket Calculation
+            // ------------------
+
+            // Get references to the three <input> elements that allow selecting 
+            //  a number of tickets and the four <p> elements for displaying the
+            //  dollar totals. 
+
+            const adultTickets = document.getElementById("adultTickets");
+            const childTickets = document.getElementById("childTickets");
+            const seniorTickets = document.getElementById("seniorTickets");
+
+            const adultTotal = document.getElementById("adultTotal");
+            const childTotal = document.getElementById("childTotal");
+            const seniorTotal = document.getElementById("seniorTotal");
+            const totalTotal = document.getElementById("totalTotal");
+
+            // These variables can't be declared as 'const' because the value
+            //  will change as the program is running.
+            let numAdults = 0;
+            let numChildren = 0;
+            let numSeniors = 0;
+
+            // It's good to define functions for some common tasks that
+            //  the program will perform. This reduces the repetition of 
+            //  code and also helps to modularize the program.
+            
+            // Here's a function that takes a total number of cents
+            //  and returns a string that indicates the number of dollars
+            //  and cents with a dollar sign in front.
+
+            // See:
+            // https://www.w3schools.com/jsref/jsref_tolocalestring_number.asp
+            //  for the use of this code:
+
+            function formatAsDollars(cents)
+            {
+                return (cents / 100).toLocaleString("en-US", 
+                    {style: "currency", currency: "USD"});
+            }
+
+            // This function calculates the cost (in cents) of the adult,
+            //  child, and senior tickets, and the total, and then uses
+            //  the 'formatAsDollars' function defined above to set the
+            //  inner HTML of the four <p> elements that display dollar 
+            //  amounts.
+
+            function calculateTicketTotal()
+            {
+                let adultCents = numAdults * 2500;
+                let childCents = numChildren * 1000;
+                let seniorCents = numSeniors * 2000;
+                let totalCents = adultCents + childCents + seniorCents;
+
+                adultTotal.innerHTML = formatAsDollars(adultCents);
+                childTotal.innerHTML = formatAsDollars(childCents);
+                seniorTotal.innerHTML = formatAsDollars(seniorCents);
+                totalTotal.innerHTML = formatAsDollars(totalCents);
+            }
+
+            // When an <input> element receives input it invokes an
+            //  input event. This event can be handled by assigning
+            //  an arrow function to the 'oninput' event.
+
+            // Here's the event listener for the number of adult tickets:
+
+            adultTickets.oninput = (event) =>
+            {
+                // Unfortunately, the numeric <input> element allows numbers
+                //  be be entered that are not within the bounds of the 
+                //  specified minimums and maximums. For this reason, several
+                //  Math functions are used:
+                //      Math.max makes sure the value is 0 or above:
+                //      Math.min makes sure the value is 10 or below:
+                //      Math.floor strips off any fractional parts.
+                numAdults = Math.floor(Math.min(10, Math.max(0, event.target.value)));
+
+                // When the number of adult tickets changes, recalculate the totals.
+                calculateTicketTotal(); 
+            };
+
+            // Similarly event listeners for the child tickets and senior tickets.
+            childTickets.oninput = (event) =>
+            {
+                numChildren = Math.floor(Math.min(10, Math.max(0, event.target.value)));
+                calculateTicketTotal(); 
+            };
+
+            seniorTickets.oninput = (event) =>
+            {
+                numSeniors = Math.floor(Math.min(10, Math.max(0, event.target.value)));
+                calculateTicketTotal(); 
+            };
+
+            // ---------------------
+            // Sieve of Eratosthenes
+            // ---------------------
+
+            // Get references to the <input> element that indicates
+            //  the maximum for the primes to be generated, and
+            //  the <p> element displaying the results.
+            const maxPrime = document.getElementById("maxPrime");
+            const primeResults = document.getElementById("primeResults");
+
+            // When the <button> labeled "Go!" is clicked, the following
+            //  arrow function is executed.
+            document.getElementById("primeGoButton").onclick = (event) =>
+            {
+                // First clear out any previous results.
+                primeResults.innerHTML = "";
+
+                // Get the number from the <input> element ane ensure that
+                //  it's an integer between 3 and 100000:
+                let maximum = maxPrime.value;
+                maximum = Math.floor(Math.max(3, Math.min(100000, maximum)));
+
+                // Create an array large enough for all the numbers
+                //  up to the maximum, and fill it with values of 'true'.
+                // As the function progresses, elements of the array
+                //  corresponding to non-prime numbers will be set to
+                //  'false'. 
+                let primes = new Array(maximum).fill(true);
+
+                // Calculate the square root of the maximum and bump
+                //  it up to the next highest integer. 
+                let sqroot = Math.ceil(Math.sqrt(maximum));
+
+                // This 'for' statement performs a repetitive 
+                //  calculation. It begins with the variable 'i1'
+                //  set to 2, continues only if 'i1' is less than
+                //  or equal to 'sqroot' and increments 'i1' 
+                //  after every iteration. 
+                for (let i1 = 2; i1 <= sqroot; i1++)
+                {
+                    // If that number is a prime, execute the 
+                    //  code within the curly braces.
+                    if (primes[i1])
+                    {
+                        // Another loop starting with 'i2' equal
+                        //  to 2, continuing when 'i2' is less than
+                        //  'maximum', and incrementing 'i2' 
+                        //  after each iteration.
+                        for (let i2 = 2; i2 < maximum; i2++)
+                        {
+                            // Every integral multiple of a prime
+                            //  is not a prime!
+                            primes[i1 * i2] = false;
+                        }
+                    }
+                }
+
+                // Initialize a string to an empty string.
+                let text = ""
+
+                // Loop through the array again.
+                for (let index = 2; index < maximum; index++)
+                {
+                    // If it's a prime...
+                    if (primes[index])
+                    {
+                        // Add it to the list followed by 
+                        //  a comma and a space.
+                        text += index + ", ";
+                    }
+                }
+
+                // Get rid of that last comma and space.
+                text = text.substring(0, text.length - 2);
+
+                // Show the results.
+                primeResults.innerHTML = text;
+            }
+        </script>  
+ </body>
+</html>

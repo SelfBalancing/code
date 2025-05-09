@@ -1,0 +1,269 @@
+<!-- 
+    AnalogClock.html (c) Charles Petzold, 2024
+
+    This file is part of www.CodeHiddenLanguage.com, a website
+        that accompanies the book "Code: The Hidden Language of 
+        Computer Hardware and Software," 2nd edition (Microsoft
+        Press, 2023) by Charles Petzold.
+    
+    This file is intended to show and describe a JavaScript
+    implementation of an analog clock.
+--><!doctype html>
+<html lang="en">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>Code: Analog Clock</title> 
+  <style>
+            /* The body of the page is set to fixed width and
+                centered on the page. */
+            body 
+            {
+                width: 600px;
+                margin: 0 auto; 
+            }
+            /* The header is centered. */
+            h1
+            {
+                text-align: center;
+            }
+
+            div.canvas-container
+            {
+                width: max-content;
+                margin: auto;
+            }
+        </style> 
+ </head> 
+ <body> 
+  <h1> Analog Clock </h1> 
+  <div class="canvas-container"> 
+   <canvas width="500" height="500">
+     Your browser does not support the canvas element. 
+   </canvas> 
+  </div> 
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+
+  <script>
+            /*
+                One of the most important and versatile features of any vector
+                programming system is transforms. These are functions that 
+                perform arithmetic operations on coordinates before they are
+                used to display figures. They are generally of four kinds:
+                
+                - translation: shift coordinates from one place to another
+                - scaling: multiply coordinates to make figures larger or smaller
+                - rotation: turn coordinates around an axis
+                - skewing: obliquely tilt figures
+
+                Coding an analog clock presents the perfect opportunity to use
+                transforms.
+            */
+
+            // The graphics processing begins as usual by getting a reference
+            //  to the canvas element and a drawing context.
+            let canvas = document.querySelector("canvas");
+            let ctx = canvas.getContext("2d");
+
+            // This function draws the entire clock. The three arguments are
+            //  the angles (in degrees) of the hour, minute, and second 
+            //  relative to 12:00. For example, if it's 20 minutes past the
+            //  hour, the minuteAngle value is 120. 
+            //
+            // This function will be called every 10 milliseconds to update
+            //  the clock. For a monitor with a 60 Hz frame rate, that's more
+            //  that sufficient to ensure smooth motion.
+            function drawClock(hourAngle, minuteAngle, secondAngle)
+            {
+                // To prepare drawing, the canvas is entirely cleared. No 
+                //  attempt is made to erase individual lines and redraw them.
+                //  Computers are fast enough these days to allow graphics 
+                //  systems to do complete redraws. Internally, these are 
+                //  coordinated with the video display to prevent flickering.
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // The save function saves the values of all the graphics 
+                //  drawing attributes so they can later be restored to their
+                //  default values.
+                ctx.save();
+
+                // Normally the origin of the graphics coordinate system is
+                //  the upper-left corner of the canvas. That's not quite 
+                //  convenient for a clock, so this translate call effectively
+                //  moves the origin to the center of the canvas.
+                ctx.translate(canvas.width / 2, canvas.height / 2);
+
+                // It will also be convenient to use coordinates that are 
+                //  independent of the actual size of the canvas. The scale
+                //  function adjusts all coordinates so that the width and
+                //  height of the canvas appears to be 200 units.
+                let scale = Math.min(canvas.width, canvas.height / 2 / 100);
+                ctx.scale(scale, scale);
+
+                // With the calls to scale and translate, we're now dealing
+                //  with a canvas that appears to have the following 
+                //  characteristics:
+                //
+                // The point (0, 0) is in the center.
+                // The point (0, -100) is horizontally centered on the top
+                // The point (100, 0) is vertically centered on the far right
+                // The point (0, 100) is horizontally centered on the bottom
+                // The point (-100, 0) is vertically centered on the left
+
+                // All subsequent filling will be colored black.
+                ctx.fillStyle = "#000000";
+
+                // This loop draws 60 small circles on the circumference of 
+                //  the clock. Most of these circles have a radius of 1 unit
+                //  to correspond to minutes, but every fifth circle has a
+                //  radius of 3 units for the hours.
+                for (let i = 0; i < 60; i++)
+                {
+                    // The ternary operator sets radius equal to 3 or 1 
+                    //  depending on the value of i % 5 == 0. The 
+                    //  modulo operator % returns a remainder of i divided
+                    //  by 5, and hence is 0 for i equal to 0, 5, 10, etc.
+                    let radius = i % 5 == 0 ? 3 : 1;
+
+                    // A path is created for a circle centered at (0, -90),
+                    //  which is straight up from the center. It has a radius
+                    //  calculated above, and goes from 0 to 2 PI degrees.
+                    ctx.beginPath();
+                    ctx.arc(0, -90, radius, 0, 2 * Math.PI);
+                    ctx.closePath();
+
+                    // That little circle is filled.
+                    ctx.fill();
+
+                    // For the next iteration, the graphics coordinates are
+                    //  rotated 6 degrees converted to radians. The next time
+                    //  the circle is drawn, it will correspond to 1 minute
+                    //  past the hour.
+                    ctx.rotate(Math.PI * 6 / 180);
+                }
+
+                // At the conclusion of the loop, the graphics coordinates have
+                //  been rotated 60 times 6 degrees, or a full circle. They are
+                //  back at their default values.
+
+                // For the remainder of this function, figures will be outlined
+                //  in black and filled in blue.
+                ctx.strokeStyle = "#000000";
+                ctx.fillStyle = "#0000FF";
+
+                // For each of the three clock hands, the state of the graphics
+                //  context is saved.
+                ctx.save();
+
+                // For the hour hand, coordinates are rotated hourAngle degrees
+                //  converted to radians.
+                ctx.rotate(Math.PI * hourAngle / 180); 
+
+                // This path draws an hour hand pointing straight up to 12:00.
+                //  The rotation orients it in its proper position.
+                //
+                // The path begins at its end, which is the point (0, -60).
+                //  It then makes a Bezier curve, followed by a line, and loops
+                //  around the center, then back up the other side.
+                ctx.beginPath();
+                ctx.moveTo(0, -60);
+                ctx.bezierCurveTo(0, -30, 20, -30, 5, -20);
+                ctx.lineTo(5, 0);
+                ctx.bezierCurveTo(5, 7.5, -5, 7.5, -5, 0);
+                ctx.lineTo(-5, -20);
+                ctx.bezierCurveTo(-20, -30, 0, -30, 0, -60);
+                ctx.closePath();
+
+                // The figure is filled and outlined, and the graphics context
+                //  is restored so the rotation is no longer in effect.
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+
+                // The minute hand is also drawn straight up, but the rotation 
+                //  is set to minuteAngle converted to radians.
+                ctx.save();
+                ctx.rotate(Math.PI * minuteAngle / 180);
+
+                ctx.beginPath();
+                ctx.moveTo(0, -80);
+                ctx.bezierCurveTo(0, -75, 0, -70, 2.5, -60);
+                ctx.lineTo(2.5, 0);
+                ctx.bezierCurveTo(2.5, 5, -2.5, 5, -2.5, 0);
+                ctx.lineTo(-2.5, -60);
+                ctx.bezierCurveTo(0, -70, 0, -75, 0, -80);
+                ctx.closePath();
+
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+
+                // The second hand is much simpler, consisting only of a line.
+                ctx.save();
+                ctx.rotate(Math.PI * secondAngle / 180);
+
+                ctx.beginPath();
+                ctx.moveTo(0, 10);
+                ctx.lineTo(0, -80);
+
+                ctx.stroke();
+                ctx.restore();
+
+                // Finally, the graphics context is restored to its initial
+                //  state on entering the function.
+                ctx.restore();
+            }
+
+            // The updateClock function is responsible for obtaining the 
+            //  current time, calculating values of hourAngle, minuteAngle,
+            //  and secondAngle, and calling drawClock.
+            function updateClock()
+            {
+                let date = new Date();
+                let hours = date.getHours();
+                let minutes = date.getMinutes();
+                let seconds = date.getSeconds();
+                let milliseconds = date.getMilliseconds();
+
+                // Notice that hourAngle is based on the hours but also 
+                //  the minutes so that the movement is smooth. It won't
+                //  jump 30 degrees when the hour changes. 
+                //
+                // The getHours method of the Date object returns an 
+                //  hour from 0 to 23, but that's no problem: For hour
+                //  values above 12, an angle greater than 360 degrees
+                //  is calculated.
+                let hourAngle = 30 * hours + 0.5 * minutes;
+
+                // Similarly the minuteAngle is based on the minutes
+                //  but also the seconds so that the movement is smooth.
+                let minuteAngle = 6 * minutes + 0.1 * seconds;
+
+                // The secondAngle movement is also smooth, but it
+                //  needn't be. In some clocks, the second hand jerks
+                //  from second to second. For a clock of that sort,
+                //  eliminate the use of the milliseconds.
+                let secondAngle = 6 * seconds + 0.006 * milliseconds;
+
+                // After all three angles have been calculated, call drawClock.
+                drawClock(hourAngle, minuteAngle, secondAngle);
+            }
+
+            // This performs the animation. The updateClock function is called
+            //  every 10 milliseconds. 
+            setInterval(updateClock, 10);
+        </script>  
+ </body>
+</html>

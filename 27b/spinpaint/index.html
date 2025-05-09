@@ -1,0 +1,317 @@
+<!-- 
+    SpinPaint.html (c) Charles Petzold, 2024
+
+    This file is part of www.CodeHiddenLanguage.com, a website
+        that accompanies the book "Code: The Hidden Language of 
+        Computer Hardware and Software," 2nd edition (Microsoft
+        Press, 2023) by Charles Petzold.
+    
+    This file is an unusual interactive painting program.
+--><!doctype html>
+<html lang="en">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>Code: Spin Paint</title> 
+  <style>
+            /* The body of the page is set to fixed width and
+                centered on the page. */
+            body 
+            {
+                width: 800px;
+                margin-left: auto; 
+                margin-right: auto;
+            }
+            h1
+            {
+                text-align: center;
+            }
+            div.canvas-container
+            {
+                touch-action: none;
+
+                width: max-content;
+                margin: auto;
+            }
+        </style> 
+ </head> 
+ <body> 
+  <h1> Spin Paint </h1> 
+  <div class="canvas-container"> 
+   <canvas width="700" height="700">
+     Your browser does not support the canvas element. 
+   </canvas> 
+  </div> 
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+  <script>
+            // This is the <canvas> element that is created in HTML on the page.
+            let canvas = document.querySelector("canvas");
+            let ctx = canvas.getContext("2d");
+
+            let width = canvas.width;
+            let height = canvas.height;
+
+            // This program seems to be spinning a circular disk on which
+            //  you can draw with the mouse. Because the surface is spinning
+            //  (or seems to be), if you hold the mouse still, it will draw
+            //  a circle around the spinning disk.
+            //
+            // Moreover, the disk is divided into quadrants, and what you 
+            //  draw with the mouse in one quadrant is flipped in mirror
+            //  images in the other quadrants, making a somewhat 
+            //  kleidoscopic image. The color of the line changes over
+            //  six seconds as you're drawing.
+            //
+            // Although this program is intuitively simple to use, at first
+            //  it seems algorithmically complex. 
+            // 
+            // The trick is to do all the drawing on secondary <canvas> 
+            //  element that exists only in code. This is known as a "buffer."
+            //  The mouse points are transformed to draw on this buffer, 
+            //  and then a rotation transform is applied to the normal 
+            //  <canvas> to update it from this buffer.
+
+            // This code creates a second <canvas> element that is the same 
+            //  height and width of the first <canvas> element. A second
+            //  graphics context is also obtained.
+            let canvasSpin = document.createElement("canvas");
+            canvasSpin.width = width;
+            canvasSpin.height = height;
+            let ctxSpin = canvasSpin.getContext("2d");
+
+            // This second <canvas> element is used to accumulate all the
+            //  lines drawn with the mouse. Then the contents of this
+            //  buffer are drawn on the normal <canvas>.
+
+            // A circle and four lines are drawn on the second <canvas>
+            //  to divide it into quadrants. 
+            // This is what is seen when the program first starts up.
+            ctxSpin.strokeStyle = "#808080";
+            ctxSpin.beginPath();
+            ctxSpin.arc(width / 2, height / 2, width / 2, 0, 2 * Math.PI);
+            ctxSpin.moveTo(width / 2, 0);
+            ctxSpin.lineTo(width / 2, height);
+            ctxSpin.moveTo(0, height / 2);
+            ctxSpin.lineTo(width, height / 2);
+            ctxSpin.stroke();
+
+            // Number of seconds for one rotation.
+            const rotationSeconds = 5;
+
+            // Several variables are defined.
+            let lastAngle = 0;
+            let startTime = new Date().getTime();
+            let pointerId = undefined;
+
+            // The DOMPoint is defined by the Document Object Model.
+            //  It has two properties named x and y. Altenatively,
+            //  a JavaScript object can be used to store points.
+            let lastMouse = new DOMPoint();
+            let thisMouse = new DOMPoint();
+
+            // Here are three event listeners for the mouse.
+            canvas.addEventListener("pointerdown", (event) =>
+            {
+                if (pointerId == undefined)
+                {
+                    // Save the pointerId and capture the pointer.
+                    pointerId = event.pointerId;
+                    canvas.setPointerCapture(pointerId);
+
+                    // Save this mouse position in two variables.
+                    lastMouse = new DOMPoint(event.offsetX, event.offsetY);
+                    thisMouse = lastMouse;
+                }
+            });
+
+            canvas.addEventListener("pointermove", (event) =>
+            {
+                if (pointerId == event.pointerId)
+                {
+                    // Save the previous mouse position.
+                    lastMouse = thisMouse; 
+
+                    // Save the new mouse position.
+                    thisMouse = new DOMPoint(event.offsetX, event.offsetY);
+                }
+            });
+
+            canvas.addEventListener("pointerup", (event) =>
+            {
+                if (pointerId == event.pointerId)
+                {
+                    pointerId = undefined;
+                }
+            });
+
+            // In the AnalogClock program, you saw how to use <canvas> 
+            //  transforms to shift, scale, and rotate coordinates.
+            // An alternative to these transform functions is a 
+            //  transform matrix. This function uses the DOMMatrix
+            //  object to built such a matrix.
+            // This matrix defines a rotation around a particular 
+            //  point, which is the center of the canvas.
+            function buildMatrix(angle)
+            {
+                // This matrix transform shifts the coordinate space
+                //  to the center of the canvas.
+                let matx = new DOMMatrix([1, 0, 0, 1, width / 2, height / 2]);
+
+                // This matrix performs a rotation around that the center.
+                matx.multiplySelf(
+                    new DOMMatrix([Math.cos(angle), Math.sin(angle), 
+                                  -Math.sin(angle), Math.cos(angle), 0, 0]));
+
+                // This matrix shifts the coordinate space back to its
+                //  original position.
+                matx.multiplySelf(
+                    new DOMMatrix([1, 0, 0, 1, -width / 2, -height / 2]));
+
+                return matx;
+            }
+
+            // The remainder of the program occurs in the function defined
+            //  in the first argument of the 'setInterval' call. This 
+            //  function is executed every 16 milliseconds, or about
+            //  60 times a second, which is a common rate of video refresh.
+            setInterval(() =>
+            {
+                // This is the number of second elapsed since the program
+                //  began (which is stored in 'startTime').
+                let seconds = (new Date().getTime() - startTime) / 1000;
+
+                // This calculates an angle of rotation of the spinning 
+                //  canvas. The number of elapsed seconds is multiplied
+                //  by 2π, and then defined by the 'rotationSeconds'
+                //  constant. The modulo operation (not strictly needed)
+                //  keeps the angle between 0 and 2π.
+                let thisAngle = (2 * Math.PI * seconds / rotationSeconds) 
+                                    % (2 * Math.PI);
+
+                // This block of code is executed only if the mouse
+                //  button is down:
+                if (pointerId != undefined)
+                {
+                    // Recall that two variables were defined called 
+                    //  'lastMouse' and 'thisMouse'. The former is the
+                    //  location of the mouse the last time this function
+                    //  was called, while the latter is the current 
+                    //  location of the mouse.
+                    //
+                    // Simarly, the variable 'lastAngle' is the rotation angle
+                    //  when this function was last called while 'thisAngle'
+                    //  is the current rotation angle just calculated.
+                    //
+                    // These two calls to the transformPoint method of the
+                    //  DOMPoint apply the transform to the two points.
+                    let pt1 = buildMatrix(-lastAngle).transformPoint(lastMouse);
+                    let pt2 = buildMatrix(-thisAngle).transformPoint(thisMouse);
+
+                    // All the graphics functions in this block of code are on
+                    //  the graphics context for the spinning canvas that was
+                    //  created by the program.
+
+                    // Save the current state of the graphics context.
+                    ctxSpin.save();
+
+                    // Define a clipping region to a circle. No drawing will be 
+                    //  allowed ourside this circle.
+                    ctxSpin.beginPath(); 
+                    ctxSpin.arc(width / 2, height / 2, width / 2, 0, 2 * Math.PI);
+                    ctxSpin.clip();
+
+                    // Begin a graphics path.
+                    ctxSpin.beginPath();
+
+                    // Create four lines based on the two transformed points. 
+                    // This first set of 'moveTo' and 'lineTo' calls defines
+                    //  a line  
+                    ctxSpin.moveTo(pt1.x, pt1.y);
+                    ctxSpin.lineTo(pt2.x, pt2.y);
+
+                    // Now effectively flip the points into the other three
+                    //  quadrants, and define another line.
+                    ctxSpin.moveTo(width - pt1.x, pt1.y);
+                    ctxSpin.lineTo(width - pt2.x, pt2.y);
+
+                    ctxSpin.moveTo(pt1.x, height - pt1.y);
+                    ctxSpin.lineTo(pt2.x, height - pt2.y);
+
+                    ctxSpin.moveTo(width - pt1.x, height - pt1.y);
+                    ctxSpin.lineTo(width - pt2.x, height - pt2.y);
+
+                    // Calculate a number that ranges from 0 to 6
+                    //  every 10 seconds.
+                    let fraction = 6 * (seconds % 10) / 10;
+
+                    // Set the strokeStyle to a color based on that fraction
+                    if (fraction < 1)
+                        // The back-tick character defines a string that can contain
+                        //  evaluated expressions that are then converted to strings.
+                        ctxSpin.strokeStyle = `rgb(255, ${fraction * 255}, 0)`;
+
+                    else if (fraction < 2)
+                        ctxSpin.strokeStyle = `rgb(${255 - (fraction - 1) * 255}, 255, 0)`;
+
+                    else if (fraction < 3)
+                        ctxSpin.strokeStyle = `rgb(0, 255, ${(fraction - 2) * 255})`;
+
+                    else if (fraction < 4)
+                        ctxSpin.strokeStyle = `rgb(0, ${255 - (fraction - 3) * 255}, 255)`;
+
+                    else if (fraction < 5)
+                        ctxSpin.strokeStyle = `rgb(${(fraction - 4) * 255}, 0, 255)`;
+
+                    else
+                        ctxSpin.strokeStyle = `rgb(255, 0, ${255 - (fraction - 5) * 255})`;
+
+                    // Draw that path with a line width of 10 pixels and a 
+                    //  line cap of "round". The line cap defines the ends of
+                    //  a thick line. When rounded the little lines tend to
+                    //  appear as if they are connected. 
+                    ctxSpin.lineWidth = 10;
+                    ctxSpin.lineCap = "round";
+                    ctxSpin.stroke();
+
+                    // Restore the state of the graphics context.
+                    ctxSpin.restore();
+                }
+
+                // Prepare for the next iteration.
+                lastAngle = thisAngle;
+
+                // These calls apply to the <canvas> element created in HTML.
+                // It is cleared in preparation for drawing.
+                ctx.clearRect(0, 0, width, height);
+
+                // These calls, which set rotation about the center of 
+                //  the <canvas> apply to the next canvas drawing operation.
+                ctx.save();
+                ctx.translate(width / 2, height / 2);
+                ctx.rotate(lastAngle);
+                ctx.translate(-width / 2, -height / 2);
+
+                // The 'drawImage' method is customarily used to render a
+                //  bitmap on the <canvas> but it can also be used to 
+                //  transfer a secondary <canvas> buffer to the <canvas>.
+                ctx.drawImage(canvasSpin, 0, 0);
+                ctx.restore();
+
+            // The animation occurs every 16 milliseconds.
+            }, 16);
+
+        </script>  
+ </body>
+</html>

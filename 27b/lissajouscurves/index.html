@@ -1,0 +1,417 @@
+<!-- 
+    LissajousCurves.html (c) Charles Petzold, 2024
+
+    This file is part of www.CodeHiddenLanguage.com, a website
+        that accompanies the book "Code: The Hidden Language of 
+        Computer Hardware and Software," 2nd edition (Microsoft
+        Press, 2023) by Charles Petzold.
+    
+    This program simulates an oscilloscope with two inputs set
+        to sine curves that create Lissajous Curves.
+
+    See https://en.wikipedia.org/wiki/Lissajous_curve for 
+        more details.  
+--><!doctype html>
+<html lang="zh-CN">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>编码：李萨如图形</title> 
+  <style>
+            body 
+            {
+                width: 600px;
+                margin: 0 auto; 
+            }
+            h1
+            {
+                text-align: center;
+            }
+
+            div.canvas-container
+            {
+                width: max-content;
+                margin: auto;
+            }
+
+            /*
+                这些样式应用于示波器下方的表单，
+                包含标签和用作滑块的range类型<input>元素
+            */
+            form 
+            { 
+                width: 600px; 
+                margin: 0 auto; 
+            }
+            label 
+            { 
+                width: 175px; 
+                float: left
+            }
+            label:after 
+            { 
+                content: ": "
+            }
+            .slider 
+            { 
+                width: 375px;
+            }
+        </style> 
+ </head> 
+ <body> 
+  <h1>李萨如图形</h1> 
+  <div class="canvas-container"> 
+   <canvas width="500" height="400">
+     您的浏览器不支持canvas元素
+   </canvas> 
+  </div> 
+  <form> 
+   <fieldset> 
+    <p> <label>X轴振幅(<span id="xAmpValue"></span>)</label> <input type="range" id="xAmpSlider" class="slider" min="0" max="1" step="0.1" value="0.9"> </p> 
+    <p> <label>X轴频率(<span id="xFrqValue"></span> 周/秒)</label> <input type="range" id="xFrqSlider" class="slider" min="0" max="10" step="0.1" value="4"> </p> 
+    <p> <label>Y轴振幅(<span id="yAmpValue"></span>)</label> <input type="range" id="yAmpSlider" class="slider" min="0" max="1" step="0.1" value="0.9"> </p> 
+    <p> <label>Y轴频率(<span id="yFrqValue"></span> 周/秒)</label> <input type="range" id="yFrqSlider" class="slider" min="0" max="10" step="0.1" value="5"> </p> 
+    <p> <label>线宽(<span id="widthValue"></span> 像素)</label> <input type="range" id="widthSlider" class="slider" min="1" max="10" value="2"> </p> 
+    <p> <label>余辉时间(<span id="persValue"></span> 秒)</label> <input type="range" id="persSlider" class="slider" min="1" max="20" step="0.5" value="4"> </p> 
+   </fieldset> 
+  </form> 
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+  <script>
+            // The <canvas> and graphics context are obtained as usual.
+            let canvas = document.querySelector("canvas");
+            let ctx = canvas.getContext("2d");
+
+            // The <canvas> has been given a width of 500 and a height
+            //  of 400, which means that the 'gridSize' is 50. There will
+            //  be 10 grids horizontally and 8 grids vertically, so they
+            //  will be square.
+            const gridSize = canvas.width / 10;
+
+            // Two classes are defined in this program. The first is a 
+            //  'SineWaveOscillator' of which there will be two 
+            //  instances. The 'frequency and 'amplitude' properties
+            //  will be set from the sliders.
+            class SineWaveOscillator
+            {
+                constructor()
+                {
+                    this.phaseAngle = 0;
+
+                    // These can be changed with sliders.
+                    this.frequency = 0;     // cycles per second
+                    this.amplitude = 0;     // range from 0 to 1
+                }
+
+                // Designed to be called every millisecond. Don't skip any! 
+                nextValue()
+                {
+                    // The 'phaseAngle' ranges from 0 to 2π indicating the
+                    //  current position of a generated sine curve.
+                    // If the frequency is 10 cycles per second (for example), 
+                    //  the phase angle will cycle from 0 to 2π every 100 
+                    //  millisecond. 
+                    this.phaseAngle += 2 * Math.PI * this.frequency / 1000;
+                    this.phaseAngle %= 2 * Math.PI;
+
+                    // The function returns the value of the sine curve 
+                    //  based on the sine of the phase angle and the 
+                    //  amplitude.
+                    return this.amplitude * Math.sin(this.phaseAngle);
+                }
+            }
+
+            // There will be only one instance of this class. It's 
+            //  defined as a class only for convenience. 
+            class Oscilloscope
+            {
+                // When the instance of 'Oscilloscope' is created,
+                //  the two arguments are the two instances of 
+                //  the 'SineWaveOscillator'.
+                constructor(xInput, yInput)
+                {
+                    // Save those input siganls. 
+                    this.xInput = xInput;
+                    this.yInput = yInput; 
+
+                    // These can be changed with sliders
+                    this.lineWidth = 2; 
+                    this.persistence = 4;   // in seconds
+
+                    // This array accumulates curve segments for display. 
+                    this.segments = [];
+
+                    // First call only draws background and grid lines
+                    this.render();
+
+                    // Prepare for animation!
+                    this.lastPoint = {x: 0, y:0}; 
+                    this.lastTime = new Date().getTime();
+
+                    // This JavaScript animation function calls the
+                    //  animate method every 16 seconds. The call
+                    //  to 'bind' is necessary when referring to 
+                    //  a method in a class.
+                    setInterval(this.animate.bind(this), 16);
+                }
+
+                // The 'render' method draws the background of the 
+                //  oscilloscope and all the curves. 
+                render()
+                {
+                    ctx.save();
+
+                    // Put origin in center.
+                    ctx.translate(5 * gridSize, 4 * gridSize);
+
+                    // Fill the background with darkish gray.
+                    ctx.fillStyle = "#202020";
+                    ctx.fillRect(-5 * gridSize, -4 * gridSize, 10 * gridSize, 8 * gridSize);
+
+                    // Draw the grid lines. 
+                    ctx.beginPath();
+
+                    for (let x = -5; x < 5; x++)
+                    {
+                        // Vertical grid lines.
+                        ctx.moveTo(gridSize * x, -gridSize * 4);
+                        ctx.lineTo(gridSize * x, gridSize * 4);
+                    }
+
+                    for (let y = -4; y < 4; y++)
+                    {
+                        // Horizontal grid lines.
+                        ctx.moveTo(-gridSize * 5, gridSize * y);
+                        ctx.lineTo(gridSize * 5, gridSize * y);
+                    }
+
+                    // Stroke them with a lightish gray color.
+                    ctx.strokeStyle = "#C0C0C0";
+                    ctx.stroke();
+
+                    // Draw the center grid lines with a heavier stroke.
+                    ctx.beginPath();
+                    ctx.moveTo(0, -gridSize * 4);
+                    ctx.lineTo(0, gridSize * 4);
+                    ctx.moveTo(-gridSize * 5, 0);
+                    ctx.lineTo(gridSize * 5, 0);
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    // Prepare for drawing polyline segments
+                    ctx.lineWidth = this.lineWidth;
+                    ctx.lineJoin = "round";
+                    ctx.lineCap = "round";
+
+                    // Draw the polyline segments
+                    for (let i = 0; i < this.segments.length; i++)
+                    {
+                        let segment = this.segments[i];
+                        let pts = segment.pts;
+
+                        // Make a path with all the points in the segment.
+                        // This is called a "polyline". It starts are a 
+                        //  particular point with 'moveTo' and then 
+                        //  continues with multiple points in 'lineTo' calls.
+                        ctx.beginPath();
+                        ctx.moveTo(5 * gridSize * pts[0].x, 
+                                   4 * gridSize * pts[0].y);
+
+                        for (let j = 1; j < pts.length; j++)
+                        {
+                            ctx.lineTo(5 * gridSize * pts[j].x, 
+                                       4 * gridSize * pts[j].y);
+                        }
+
+                        // The stroke style is an RGB color of green but with 
+                        //  an alpha channel of the brightness of the segment.
+                        //  This governs the transparency of the line, and
+                        //  it's how the strokes fade out.
+
+                        ctx.strokeStyle = `rgba(0, 255, 0, ${segment.brightness})`;
+                        ctx.stroke();
+                    }
+
+                    ctx.restore(); 
+                }
+
+                // The 'animate' method is called every 16 milliseconds.
+                animate()
+                {
+                    // Get the current time.
+                    let nowTime = new Date().getTime();
+
+                    // This little block of code adjusts the brightness of all 
+                    //  the segments and removes those that have disappeared.
+                    // The 'segments' array contains a collection of line 
+                    //  segments, which themselves are a collection of points, 
+                    //  a time stamp, and a brightness.
+                    // The 'filter' method enumerates all the elements of this
+                    //  array. You provide a function that only returns the  
+                    //  ones you want to keep. 
+                    this.segments = this.segments.filter((segment) =>
+                    {
+                        // Adjust the brightness of each segment based on how
+                        //  old it is and the persistence setting from a 
+                        //  slider.
+                        segment.brightness = 1 - (nowTime - segment.timeStamp) 
+                                                / 1000 / this.persistence;
+
+                        // Only return those that still have a positive
+                        //  brightness.
+                        return segment.brightness >= 0;
+                    });
+
+                    // Create a new 'segment' object. THis object has three
+                    //  properties named 'pts' (an array of points), 
+                    //  'timeStamp' and an initial 'brightness' of 1.
+                    let segment = {pts:[], timeStamp: nowTime, brightness: 1};
+
+                    // Add the last point to this new points array to prevent 
+                    //  gaps when the line segments are display.
+                    segment.pts.push(this.lastPoint);
+
+                    // Loop through the number of milliseconds between the 
+                    //  last time this code executed and the current time.
+                    // Notice that the 'msec' variable is not used in the
+                    //  body of the loop! 
+                    for (let msec = this.lastTime; msec <= nowTime; msec++)
+                    {
+                        // Get the next values from the two sinewave 
+                        //  oscillators and add them to the 'pts' array.
+                        segment.pts.push({x: this.xInput.nextValue(), 
+                                          y: this.yInput.nextValue()});
+                    }
+
+                    // Save the last point and reuse it in the next 
+                    //  segment to prevent gaps.
+                    this.lastPoint = segment.pts[segment.pts.length - 1];
+
+                    // Add the new 'segment' to the 'segments' array.
+                    this.segments.push(segment);
+
+                    // Render everything
+                    this.render();          
+
+                    // Save the current time
+                    this.lastTime = nowTime;
+                }
+            }
+
+            // Now that the two classes have been defined, this is the
+            //  remaining code that is executed only once when the 
+            //  page loads. 
+
+            // Create two oscillators.
+            let xOscillator = new SineWaveOscillator();
+            let yOscillator = new SineWaveOscillator();
+
+            // Wire the x-amplitude elements:
+            // ------------------------------
+            // Get the elements for the slider and the text value
+            //  of the slider. 
+            let xAmpSlider = document.getElementById("xAmpSlider");
+            let xAmpValue = document.getElementById("xAmpValue");
+
+            // Set the amplitude of the oscillator from the slider.
+            xOscillator.amplitude = xAmpSlider.value;
+
+            // Set the value of the slider to the span that displays
+            //  the value.
+            xAmpValue.innerHTML = xAmpSlider.value;
+
+            // Do that same thing when the slider input changes.
+            xAmpSlider.oninput = (event) =>
+            {
+                xOscillator.amplitude = event.target.value;
+                xAmpValue.innerHTML = event.target.value;
+            }
+
+            // Wire the x-frequency elements similarly:
+            // ----------------------------------------
+            let xFrqValue = document.getElementById("xFrqValue");
+            let xFrqSlider = document.getElementById("xFrqSlider");
+
+            xOscillator.frequency = xFrqSlider.value;
+            xFrqValue.innerHTML = xFrqSlider.value;
+
+            xFrqSlider.oninput = (event) =>
+            {
+                xOscillator.frequency = event.target.value;
+                xFrqValue.innerHTML = event.target.value;
+            }
+
+            // Wire the y-amplitude elements similarly:
+            // ----------------------------------------
+            let yAmpValue = document.getElementById("yAmpValue");
+            let yAmpSlider = document.getElementById("yAmpSlider");
+
+            yOscillator.amplitude = yAmpSlider.value;
+            yAmpValue.innerHTML = yAmpSlider.value;
+
+            yAmpSlider.oninput = (event) =>
+            {
+                yOscillator.amplitude = event.target.value;
+                yAmpValue.innerHTML = event.target.value;
+            }
+
+            // Wire the y-frequency elements similarly:
+            // ----------------------------------------
+            let yFrqValue = document.getElementById("yFrqValue");
+            let yFrqSlider = document.getElementById("yFrqSlider");
+
+            yOscillator.frequency = yFrqSlider.value;
+            yFrqValue.innerHTML = yFrqSlider.value;
+
+            yFrqSlider.oninput = (event) =>
+            {
+                yOscillator.frequency = event.target.value;
+                yFrqValue.innerHTML = event.target.value;
+            }
+
+            // Create the oscilloscope with the two oscillators.
+            let oscilloscope = 
+                new Oscilloscope(xOscillator, yOscillator);
+
+            // Wire the line width elements similarly:
+            // ---------------------------------------
+            let widthValue = document.getElementById("widthValue");
+            let widthSlider = document.getElementById("widthSlider");
+
+            oscilloscope.lineWidth = widthSlider.value;
+            widthValue.innerHTML = widthSlider.value;
+
+            widthSlider.oninput = (event) =>
+            {
+                oscilloscope.lineWidth = event.target.value;
+                widthValue.innerHTML = event.target.value;
+            }
+
+            // Wire the persistence elements similarly:
+            // ----------------------------------------
+            let persValue = document.getElementById("persValue");
+            let persSlider = document.getElementById("persSlider");
+
+            oscilloscope.persistence = persSlider.value;
+            persValue.innerHTML = persSlider.value;
+
+            persSlider.oninput = (event) =>
+            {
+                oscilloscope.persistence = event.target.value;
+                persValue.innerHTML = event.target.value;
+            }
+
+        </script>  
+ </body>
+</html>

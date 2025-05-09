@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="zh-CN">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>编码：十六进制计算器</title> 
+  <style>
+            body 
+            {
+                width: 900px;
+                margin: 0 auto; 
+            }
+            h1
+            {
+                text-align: center;
+            }
+            table
+            {
+                text-align: center; 
+                margin: 0 auto; 
+            }
+            td
+            {
+                height: 4em;
+                width: 4em;
+                padding: 0.25em;
+                border: 0px;
+            }
+            button
+            {
+                font-size: 2.5em;
+                width: 100%;
+                height: 100%;
+                background: lightblue;
+            }
+            button:active
+            {
+                background: blue;
+            }
+        </style> 
+ </head> 
+ <body> 
+  <header> 
+   <h1>十六进制计算器</h1> 
+  </header> 
+  <table id="calculatorTable"> 
+   <tbody> 
+    <tr> 
+     <td colspan="5"><button type="button" id="result-clear">0</button></td> 
+    </tr> 
+    <tr> 
+     <td><button type="button" id="D">D</button></td> 
+     <td><button type="button" id="E">E</button></td> 
+     <td><button type="button" id="F">F</button></td> 
+     <td><button type="button" id="+">+</button></td> 
+     <td><button type="button" id="&amp;">&amp;</button></td> 
+    </tr> 
+    <tr> 
+     <td><button type="button" id="A">A</button></td> 
+     <td><button type="button" id="B">B</button></td> 
+     <td><button type="button" id="C">C</button></td> 
+     <td><button type="button" id="-">–</button></td> 
+     <td><button type="button" id="|">|</button></td> 
+    </tr> 
+    <tr> 
+     <td><button type="button" id="7">7</button></td> 
+     <td><button type="button" id="8">8</button></td> 
+     <td><button type="button" id="9">9</button></td> 
+     <td><button type="button" id="*">*</button></td> 
+     <td><button type="button" id="^">^</button></td> 
+    </tr> 
+    <tr> 
+     <td><button type="button" id="4">4</button></td> 
+     <td><button type="button" id="5">5</button></td> 
+     <td><button type="button" id="6">6</button></td> 
+     <td><button type="button" id="/">/</button></td> 
+     <td><button type="button" id="<">&lt;</button></td> 
+    </tr> 
+    <tr> 
+     <td><button type="button" id="1">1</button></td> 
+     <td><button type="button" id="2">2</button></td> 
+     <td><button type="button" id="3">3</button></td> 
+     <td><button type="button" id="%">%</button></td> 
+     <td><button type="button" id=">">&gt;</button></td> 
+    </tr> 
+    <tr> 
+     <td><button type="button" id="0">0</button></td> 
+     <td colspan="2"><button type="button" id="back">退格</button></td> 
+     <td colspan="2"><button type="button" id="=">等于</button></td> 
+    </tr> 
+   </tbody> 
+  </table> 
+  <p style="text-align: center"> 使用鼠标或键盘输入数字、字母和运算符。<br> 点击顶部显示区域(或按Esc键)可清除结果。 </p> 
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr>
+  <div class="narrative">
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1>
+   </div>
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer>
+  <script>
+            // These four variables are used to save the state of
+            //  the calculator.
+            let startNewNumber = true;
+            let number = 0;
+            let firstNumber = 0;
+            let operation = "";
+
+            // This is used when simulating a button click with
+            //  the keyboard.
+            let pressedButton = undefined;
+
+            // This is where calculated results go.
+            let resultButton = document.getElementById("result-clear");
+
+            // The 'calculate' is called when a number has been entered
+            //  that's been saved in 'firstNumber', an operation has 
+            //  been entered stored in 'operation', and a second 
+            //  number has been entered stored in 'number'.
+            function calculate()
+            {
+                // The 'switch' statement compares its argument with
+                //  a list of 'case' statements to execute code.
+                switch (operation)
+                {
+                    case "+": 
+                        number = firstNumber + number;
+                        break;
+            
+                    case "-":
+                        number = firstNumber - number;
+                        break;
+            
+                    case "*":
+                        number = firstNumber * number;
+                        break;
+            
+                    case "/":
+                        // This doesn't check for zero divide!
+                        number = firstNumber / number;
+                        break;
+            
+                    case "%":
+                        // This doesn't check for zero divide either!
+                        number = firstNumber % number;
+                        break;
+            
+                    case "&":
+                        number = firstNumber & number;
+                        break;
+            
+                    case "|":
+                        number = firstNumber | number;
+                        break;
+            
+                    case "^":
+                        number = firstNumber ^ number;
+                        break;
+            
+                    case "<":
+                        number = firstNumber << number;
+                        break;
+            
+                    case ">":
+                        number = firstNumber >> number;
+                        break;
+            
+                    case "=":
+                        break;
+                }
+            }
+
+            // For the 'processDigit' function, the 'digit' parameter can 
+            //  range from 0 through 15. 
+            function processDigit(digit)
+            {
+                // The 'startNewNumber' variable is set to true at the n
+                //  outset and when an operation has been entered. 
+                if (startNewNumber)
+                {
+                    firstNumber = number;
+                    number = 0;
+                    startNewNumber = false;
+                }
+        
+                // JavaScript integers are valid up to 15 digits,
+                //  so try to avoid overflow.
+                if (number <= 0x0FFFFFFFFFFF)
+                {
+                    number = 16 * number + digit;
+                }
+            }
+
+            // This 'processButton' function is mostly based on the
+            //  button IDs.
+            function processButton(id)
+            {
+                if (id == 'calculatorTable')
+                {
+                    // Do nothing if clicking between the buttons.
+                }
+                else if (id == "back")
+                {
+                    // For backspace, divide number by 16.
+                    number = Math.floor(number / 16);
+                }
+                else if (id == "result-clear")
+                {
+                    // For clicking the result button, 
+                    //  initialize all these variables.
+                    number = 0;
+                    firstNumber = 0;
+                    startNewNumber = true;
+                    operation = "";
+                }
+                else if (id >= "0" && id <= "9")
+                {
+                    // Process a decimal digit.
+                    processDigit(parseInt(id));
+                }
+                else if (id >= "A" && id <= "F")
+                {
+                    // Process a hexadecimal letter.
+                    processDigit(parseInt(id, 16));
+                }
+                else 
+                {
+                    if (!startNewNumber)
+                    {
+                        calculate();
+                    }
+        
+                    // Save the operation
+                    operation = id;
+
+                    // Start a new number
+                    startNewNumber = true;
+                }
+        
+                // Update the 'resultButton' display.
+                resultButton.innerHTML = number.toString(16).toUpperCase();
+            }
+        
+            // This effectively adds an event listener for all buttons
+            //  in the table.
+            document.getElementById("calculatorTable").onclick = (event) => 
+            {
+                // This is the id of the button being clicked.
+                processButton(event.target.id);
+            }
+
+            // Event listeners are also added to the document for the
+            //  keyboard. The idea is to mimic a button press.
+            document.addEventListener("keydown", (event) =>
+            {
+                // This variable exists outside the function. 
+                pressedButton = undefined;
+
+                // The 'event.key' property is often a letter or a 
+                //  number but some other keys are also required.
+                let key = event.key;
+
+                // If it's the Escape key, simulate a resultButton
+                //  press to clear the calculator.
+                if (key == "Escape")
+                {
+                    pressedButton = resultButton;
+                }
+                // If it's a Backspace, simulate the Back key.
+                else if (key == "Backspace")
+                {
+                    pressedButton = document.getElementById("back");
+                }
+                // Otherwise get the button corresponding to the letter
+                //   or number.
+                else
+                {
+                    pressedButton = document.getElementById(key.toUpperCase());
+                }
+
+                // If 'pressedButton' has been set...
+                if (pressedButton != undefined)
+                {
+                    // Turn the background blue like a real button click.
+                    pressedButton.style.background = "Blue";
+
+                    // Simulates a button click by calling the click listener.
+                    pressedButton.click();
+                }
+            });
+        
+            document.addEventListener("keyup", () =>
+            {
+                // For the key up event, restore the button.
+                if (pressedButton != undefined)
+                {
+                    pressedButton.style.background = "LightBlue";
+                    pressedButton = undefined;
+                }
+            });
+       
+        </script>  
+ </body>
+</html>
