@@ -113,19 +113,30 @@
    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/20250508231605.png" alt="R-S电路简化图" style="display: block; margin: 0 auto; max-width: 50%;">
    <hr style="margin: 20px 0; border: 0; border-top: 1px dashed #ad8888;">
    <p>R-S触发器最突出的特点在于:它可以记住哪个输入端的最终状态为1</p>
-   <p>但有时需要一种记忆能力更加强大的电路，例如能记住在<b>某个特定时间点上</b>的一个信号是0还是1</p>
-   
+   <p>但有时需要一种记忆能力更加强大的电路</p>
+   <p>例如能记住在<b>某个特定时间点上</b>的一个信号是0还是1</p>
+   <p>在某个时刻牢牢记住，保持住，不会忘记</p>
+   <p>这就是接下来要讲的<b>保持触发器</b></p>
     </div>
 
   <h3>保持触发器</h3> 
+
   <div class="narrative"> 
-   <p> 在这个变体中，<b>Set</b>和<b>Reset</b>信号工作方式类似，但仅在Hold输入设置为1时有效。<b>Set</b>输入本质上将Hold输入的值保存到<b>Q</b>输出。</p> 
+   <p> 基于上面所讲的R-S触发器</p>
+  <p>保持触发器要做的</p> 
+  <p>在某个时刻，无论输入如何变化，输出Q都不变</p>
+  <p>这才算是把值给保持住，给记住了</p>
   </div> 
+
   <div class="canvas-container"> 
    <canvas id="canvasHoldFF" width="880" height="420">
      您的浏览器不支持画布元素
    </canvas> 
   </div> 
+
+  <div class="narrative"> 
+    <p> 在这个变体中，<b>Set</b>和<b>Reset</b>信号工作方式类似，但仅在Hold输入设置为1时有效。<b>Set</b>输入本质上将Hold输入的值保存到<b>Q</b>输出。</p> 
+   </div> 
   <h3>电平触发D型触发器</h3> 
   <div class="narrative"> 
    <p> 该触发器可以轻松修改为创建下面所示的标准电平触发D型触发器。当<b>Clock</b>为1时，<b>Data</b>输入被传输到<b>Q</b>输出。</p> 
@@ -136,7 +147,7 @@
      您的浏览器不支持画布元素
    </canvas> 
   </div> 
-  <h3>边沿触发D型触发器</h3> 
+  <h3>边沿触发的D型触发器</h3> 
   <div class="narrative"> 
    <p> 在下面的"边沿触发"触发器中，<b>Q</b>输出仅在<b>Clock</b>输入从0变为1时从<b>Data</b>输入设置。<b>Data</b>输入的任何进一步变化都不会影响<b>Q</b>输出。</p> 
   </div> 
@@ -185,7 +196,7 @@
    </canvas> 
   </div> 
   <div style="text-align: center; margin: 20px 0;">
-
+    <hr style="margin: 20px 0; border: 0; border-top: 1px dashed #bd3131;">
     <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
     <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
     <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>

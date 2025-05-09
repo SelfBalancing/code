@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>09 存储器</title> 
+  <link rel="stylesheet" href="css/style.240618.css"> 
+ </head> 
+ <body> 
+  <header> 
+   <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   <h2>第19章 存储器</h2> 
+  </header> 
+  <div class="narrative"> 
+   <p> 本页中的一些电路较大。您可能需要缩小浏览器屏幕才能看到整个存储器阵列。</p> 
+  </div> 
+  <h3>1位存储器</h3> 
+  <div class="narrative"> 
+   <p> 一个电平触发的D型触发器可以存储1位数据。点击或触摸<b>Write</b>按钮将<b>Data In</b>值写入存储器。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasOneBitRam" width="880" height="420">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <h3>8位存储器</h3> 
+  <div class="narrative"> 
+   <p> 一次性存储整个字节需要8个存储器单元，所有<b>Write</b>信号都连接在一起。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasEightBitRam" width="1750" height="400">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <h3>8×1 RAM</h3> 
+  <div class="narrative"> 
+   <p> 有些不同的是存储8个独立1位值的电路。现在需要一个3位地址(左上角)来选择存储位的存储器单元。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvas8by1Ram" width="2000" height="1025">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <h3>16×8随机存取存储器</h3> 
+  <div class="narrative"> 
+   <p> 这个存储器阵列存储16个字节。在左侧选择一个4位存储器地址，以及要存储到存储器中的字节。点击<b>Write</b>按钮存储它。您可以通过选择相同的4位地址来读取该字节(或覆盖它)。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvas16by8Ram" width="2300" height="2275">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+
+  <script src="js/PropagatingLogicLib.240618.js"></script> 
+  <script src="js/PropagatingGatesLib.240618.js"></script> 
+  <script src="js/PropagatingIoLib.240618.js"></script> 
+  <script src="js/PropagatingSemiconductorsLib.240618.js"></script> 
+  <script src="js/StructuredLayoutLib.240618.js"></script> 
+  <script src="js/Chapter19OneBitMemory.json.js"></script> 
+  <script src="js/Chapter19MemoryBit.json.js"></script> 
+  <script src="js/Chapter19MemoryBitIo.json.js"></script> 
+  <script src="js/Chapter19EightBitMemory.json.js"></script> 
+  <script src="js/Chapter19EightAnds.json.js"></script> 
+  <script src="js/Chapter19ThreeToEightDecoder.json.js"></script> 
+  <script src="js/Chapter19EightToOneSelector.json.js"></script> 
+  <script src="js/Chapter19EightByOneRam.json.js"></script> 
+  <script src="js/Chapter19MemoryCell.json.js"></script> 
+  <script src="js/Chapter19OneByteMemory.json.js"></script> 
+  <script src="js/Chapter19SixteenByEightArray.json.js"></script> 
+  <script src="js/Chapter19FourToSixteenDecoder.json.js"></script> 
+  <script src="js/Chapter19SixteenByEightRam.json.js"></script> 
+  <script>
+            new CircuitBuilder(canvasOneBitRam, Chapter19OneBitMemory);
+            new CircuitBuilder(canvasEightBitRam, Chapter19EightBitMemory);
+            new CircuitBuilder(canvas8by1Ram, Chapter19EightByOneRam);
+            new CircuitBuilder(canvas16by8Ram, Chapter19SixteenByEightRam);
+        </script> 
+ <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+ </body>
+</html>

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>08 让我们造个时钟！</title> 
+  <link rel="stylesheet" href="css/style.240618.css"> 
+ </head> 
+ <body> 
+  <header> 
+   <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   <h2>08 让我们造个时钟！</h2> 
+  </header> 
+  <div class="narrative"> 
+   <p> 本章中的一些电路较大，您可能需要缩小浏览器屏幕才能看到整个电路。</p> 
+  </div> 
+  <h3>二进制时钟</h3> 
+  <div class="narrative"> 
+   <p> 这是一个二进制时钟。它以二进制编码十进制(BCD)显示秒(顶部)、分钟和小时，左下角有AM/PM指示器。每组三或四个触发器代表一个十进制数字。例如，010 0101表示25。</p> 
+   <p> 这个时钟不显示正确的时间。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasBinary" width="1210" height="1275">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <h3>可设置二进制时钟</h3> 
+  <div class="narrative"> 
+   <p> 这个二进制时钟与第一个相同，只是左侧有两个按钮可以让您将时钟设置为特定时间。按下左侧顶部的方形按钮设置分钟，按下底部按钮设置小时。</p> 
+   <p> 计时基于JavaScript动画功能，可能不精确。</p> 
+  </div> 
+  <div class="canvas-container"> 
+   <canvas id="canvasSettable" width="1280" height="1425">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <h3>Nixie显示管</h3> 
+  <div class="narrative">
+   <p> 这个电路展示了封闭阴极显示器(通常称为Nixie管)如何显示0到9的数字。</p>
+  </div>
+  <div class="canvas-container">
+   <canvas id="canvasNixie" width="725" height="1000">
+     您的浏览器不支持画布元素
+   </canvas>
+  </div>
+  <h3>七段显示器</h3>
+  <div class="narrative">
+   <p> 七段显示器稍微复杂一些，因为需要解码电路来点亮各个段。</p>
+  </div>
+  <div class="canvas-container">
+   <canvas id="canvasSevenSeg" width="725" height="1125">
+     您的浏览器不支持画布元素
+   </canvas>
+  </div>
+  <h3>点阵显示器</h3>
+  <div class="narrative">
+   <p> 点阵显示器更加复杂，因为任何时候只能点亮一列点(或其他配置中的一行点)。这需要电路快速循环所有五列，以欺骗眼睛认为所有点同时点亮。(这里效果被夸大了)</p>
+   <p> 还需要一种包含数字点阵图案的只读存储器。在这个电路中，这是由二极管阵列提供的。</p>
+  </div>
+  <div class="canvas-container">
+   <canvas id="canvasDotMatrix" width="1350" height="1190">
+     您的浏览器不支持画布元素
+   </canvas>
+  </div>
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+  <script src="js/PropagatingLogicLib.240618.js"></script> 
+  <script src="js/PropagatingGatesLib.240618.js"></script> 
+  <script src="js/PropagatingIoLib.240618.js"></script> 
+  <script src="js/PropagatingBoxesLib.240618.js"></script> 
+  <script src="js/PropagatingAdvIoLib.240619.js"></script> 
+  <script src="js/PropagatingSemiconductorsLib.240618.js"></script> 
+  <script src="js/StructuredLayoutLib.240618.js"></script> 
+  <script src="js/Chapter18FlipFlop.json.js"></script> 
+  <script src="js/Chapter18LowNoReset.json.js"></script> 
+  <script src="js/Chapter18LowReset.json.js"></script> 
+  <script src="js/Chapter18LowDigit.json.js"></script> 
+  <script src="js/Chapter18HighDigit.json.js"></script> 
+  <script src="js/Chapter18TwoDigits.json.js"></script> 
+  <script src="js/Chapter18HoursCore.json.js"></script> 
+  <script src="js/Chapter18Hours.json.js"></script> 
+  <script src="js/Chapter18HoursLights.json.js"></script> 
+  <script src="js/Chapter18AmPm.json.js"></script> 
+  <script src="js/Chapter18Oscillator.json.js"></script> 
+  <script src="js/Chapter18BinaryClock.json.js"></script> 
+  <script src="js/Chapter18SettableBinaryClock.json.js"></script> 
+  <script src="js/Chapter18BcdDecoder.json.js"></script> 
+  <script src="js/Chapter18NixieDecoder.json.js"></script> 
+  <script src="js/Chapter18NixieDisplay.json.js"></script> 
+  <script src="js/Chapter18SevenSegmentDecoder.json.js"></script> 
+  <script src="js/Chapter18SevenSegmentDisplay.json.js"></script> 
+  <script src="js/Chapter18BcdGenerator.json.js"></script> 
+  <script src="js/Chapter18DotMatrixEnable.json.js"></script> 
+  <script src="js/Chapter18FlipFlop2.json.js"></script> 
+  <script src="js/Chapter18FastOscillator.json.js"></script> 
+  <script src="js/Chapter18DotMatrixColumnDecoder.json.js"></script> 
+  <script src="js/Chapter18DotMatrixColumnSelect.json.js"></script> 
+  <script src="js/Chapter18DotMatrixDisplay.json.js"></script> 
+  <script>
+            new CircuitBuilder(canvasBinary, Chapter18BinaryClock);
+            new CircuitBuilder(canvasSettable, Chapter18SettableBinaryClock);
+            new CircuitBuilder(canvasNixie, Chapter18NixieDisplay);
+            new CircuitBuilder(canvasSevenSeg, Chapter18SevenSegmentDisplay);
+            new CircuitBuilder(canvasDotMatrix, Chapter18DotMatrixDisplay);
+        </script>  
+ </body>
+</html>
