@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>12 寄存器与总线</title> 
+  <link rel="stylesheet" href="css/style.240618.css"> 
+ </head> 
+ <body> 
+  <header> 
+   <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br></h1> 
+   <h2>12 寄存器与总线</h2> 
+  </header> 
+  <div class="narrative"> 
+   <p> 本章开始探索CPU各组件如何通过8位数据总线和16位地址总线连接，重点介绍寄存器阵列，它在七个寄存器中存储字节：A(<b>Accumulator</b>)、B、C、D、E、H(表示"高")和L(表示"低")。</p> 
+  </div> 
+  <h3>简单寄存器阵列</h3> 
+  <div class="narrative"> 
+   <p> 这是寄存器阵列的简化版本。七个锁存器标有对应七个寄存器的字母。由于空间限制，锁存器的输入和输出信号未标注。每个锁存器的8位输入在顶部；输出在底部；<b>Clock</b>信号在左侧。这些锁存器由左上角的<b>Clock</b>和<b>Input Select</b>信号控制。</p> 
+   <p> 锁存器的输出与七个三态缓冲器组合。与锁存器一样，输入在顶部；输出在底部；<b>Enable</b>信号在右侧。这些由右上角的<b>Enable</b>和<b>Output Select</b>信号控制。</p> 
+  </div> 
+  <div class="canvas-container" style="position: relative"> 
+   <canvas id="canvasSimpleRegisterArray" width="1350" height="725">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <div class="narrative"> 
+   <p> <b>Accumulator</b>始终可用，因为它成为算术逻辑单元的<b>A</b>输入。</p> 
+  </div> 
+  <h3>递增器/递减器</h3> 
+  <div class="narrative"> 
+   <p> 在某些情况下需要递增和递减16位值。因此，CPU专门为此设计了一个电路。</p> 
+  </div> 
+  <div class="canvas-container" style="position: relative"> 
+   <canvas id="canvasIncrementerDecrementer" width="1400" height="800">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <div class="narrative"> 
+   <p> 您可以使用顶部中央的"旋转控件"选择16位十六进制数字。每个上下箭头控制一个数字。然后，点击左上角的<b>Clock</b>按钮将该值存储在16位寄存器中。点击右上角的<b>Decrement</b>或<b>Increment</b>按钮将启用三态缓冲器在底部显示结果。</p> 
+   <p> 注意！如果您尝试各种值，很容易忘记点击<b>Clock</b>将新值存储在锁存器中。</p> 
+  </div> 
+  <h3>多功能寄存器阵列</h3> 
+  <div class="narrative"> 
+   <p> 上面显示的(相对)简单寄存器阵列需要通过两种方式增强以使其更加多功能。首先，<b>Accumulator</b>寄存器需要独立控制，以便值可以保存在<b>Accumulator</b>中并在以后检索。这是图中左侧的附加电路。</p> 
+   <p> 其次，<b>H</b>和<b>L</b>寄存器需要连接到地址总线。<b>HL</b>寄存器对用于寻址内存，并且寄存器对可以递增和递减。这需要右侧显示的更广泛的修改。</p> 
+   <p> 在下一章中，这个寄存器阵列将连接到8位数据总线和16位地址总线。数据总线在这里由顶部的8位旋转控件和底部的<b>8-Bit Output</b>表示。地址总线由16位旋转控件和<b>16-bit Output</b>表示。</p> 
+  </div> 
+  <div class="canvas-container" style="position: relative"> 
+   <canvas id="canvasVersatileRegisterArray" width="1900" height="950">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <div class="narrative"> 
+   <p> 这个寄存器阵列与早期的寄存器阵列兼容，但它还有五个新的控制信号：</p> 
+   <p> 要将数据总线上的值(由8位旋转控件选择的值)保存在Accumulator中，请按<b>Accumulator Clock</b>按钮。要在数据总线上显示Accumulator的值，请按<b>Accumulator Enable</b>按钮。</p> 
+   <p> 地址总线上的值可以用16位旋转控件指定。要将其保存在<b>HL</b>寄存器对中，首先按<b>HL Select</b>使该按钮亮起。这将选择来自旋转控件的32位值。然后按<b>HL Clock</b>将16位值保存在<b>H</b>和<b>L</b>寄存器中。要在地址总线上显示<b>HL</b>寄存器对的值(这里由<b>16-Bit Output</b>显示表示)，请按<b>HL Enable</b>按钮。</p> 
+  </div> 
+  <hr> 
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+  <script src="js/PropagatingLogicLib.240618.js"></script> 
+  <script src="js/PropagatingGatesLib.240618.js"></script> 
+  <script src="js/PropagatingIoLib.240618.js"></script> 
+  <script src="js/PropagatingBoxesLib.240618.js"></script> 
+  <script src="js/PropagatingDataPathLib.240618.js"></script> 
+  <script src="js/PropagatingAdvIoLib.240619.js"></script> 
+  <script src="js/PropagatingAdvBoxesLib.240618.js"></script> 
+  <script src="js/StructuredLayoutLib.240618.js"></script> 
+  <script src="js/Chapter22SimpleRegisterArray.json.js"></script> 
+  <script src="js/Chapter22IncrementerDecrementerBit.json.js"></script> 
+  <script src="js/Chapter22IncrementerDecrementerBitE.json.js"></script> 
+  <script src="js/Chapter22IncrementerDecrementerBitF.json.js"></script> 
+  <script src="js/Chapter22IncrementerDecrementer.json.js"></script> 
+  <script src="js/Chapter22VersatileRegisterArray.json.js"></script> 
+  <script>
+            new CircuitBuilder(canvasSimpleRegisterArray, Chapter22SimpleRegisterArray);
+            new CircuitBuilder(canvasIncrementerDecrementer, Chapter22IncrementerDecrementer);
+            new CircuitBuilder(canvasVersatileRegisterArray, Chapter22VersatileRegisterArray);
+        </script>  
+ </body>
+</html>

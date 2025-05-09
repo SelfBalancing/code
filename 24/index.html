@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>14 循环、跳转与调用</title> 
+  <link rel="stylesheet" href="css/style.240618.css"> 
+ </head> 
+ <body> 
+  <header> 
+   <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   <h2>14 循环、跳转与调用</h2> 
+  </header> 
+  <div class="narrative"> 
+   <p> </p> 
+   <p> </p> 
+  </div> 
+  <h3>支持跳转指令的增强型CPU</h3> 
+  <div class="narrative"> 
+   <p> 此电路与<a href="../23/index.html">第23章页面</a>上的电路相同，只是它还实现了跳转指令。在图的右下角，<b>Arithmetic Logic Unit</b>输出<b>CY Flag</b>、<b>Z Flag</b>和<b>S Flag</b>信号，这些信号输入到<b>Instruction Decoder</b>中。</p> 
+   <p> 左侧的内存块包含四个单选按钮，允许将四个不同的程序加载到内存中。这些程序都将一系列数字相加。这些程序显示在书的以下页面：</p> 
+   <ul> 
+    <li>第380页：不使用循环相加数字</li> 
+    <li>第383-384页：使用循环相加数字</li> 
+    <li>第384-385页：更短的循环程序</li> 
+    <li>第386页：使用哨兵值相加数字</li> 
+   </ul> 
+   <p> 当您点击单选按钮将另一个程序加载到内存时，您还需要点击<b>Reset</b>按钮将<b>Program Counter</b>重置为0000h。</p> 
+   <p> 在所有情况下，要相加的数字从地址0020h开始，而不是书中显示的地址1000h。所有情况下都有6个数字，分别是10、20、30、40、50和60的十六进制等效值。第一个程序已修改为相加6个数字而不是5个。</p> 
+   <p> 在所有情况下，程序将这些数字相加得到210，即D2h。这个总和存储在HLT(76h)指令之后。</p> 
+  </div> 
+  <div class="canvas-container" style="position: relative"> 
+   <canvas id="canvasCentralProcessingUnit" width="2050" height="1300">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <h3>8080模拟器</h3> 
+  <div class="narrative"> 
+   <p> 书中第402页提到的8080模拟器是8080汇编器和模拟器的一部分，可在<a href="../Chapter27a">第27章的第一个</a>页面上找到。书中第390至394页的两个乘法程序包含在该页面上。</p> 
+  </div> 
+  <hr> 
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+  <script src="js/PropagatingLogicLib.240618.js"></script> 
+  <script src="js/PropagatingGatesLib.240618.js"></script> 
+  <script src="js/PropagatingIoLib.240618.js"></script> 
+  <script src="js/PropagatingBoxesLib.240618.js"></script> 
+  <script src="js/PropagatingDataPathLib.240618.js"></script> 
+  <script src="js/StructuredLayoutLib.240618.js"></script> 
+  <script src="js/PropagatingCpuBoxesLib.240618.js"></script> 
+  <script src="js/PropagatingMemoryLib.240618.js"></script> 
+  <script src="js/Chapter23CPUCommon.json.js"></script> 
+  <script src="js/Chapter24CentralProcessingUnit.json.js"></script> 
+  <script>
+            new CircuitBuilder(canvasCentralProcessingUnit, Chapter24CentralProcessingUnit);
+        </script>  
+ </body>
+</html>

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>13 CPU控制信号</title> 
+  <link rel="stylesheet" href="css/style.240618.css"> 
+ </head> 
+ <body> 
+  <header> 
+   <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   <h2>13 CPU控制信号</h2> 
+  </header> 
+  <div class="narrative"> 
+   <p> 第23章构建了一个CPU，它执行经典Intel 8080微处理器的指令子集。这个CPU需要前两章的算术逻辑单元和寄存器阵列，以及几个较小的组件。将所有部分连接在一起的是指令解码器，它为其他部分生成所有控制信号。</p> 
+  </div> 
+  <h3>指令解码器</h3> 
+  <div class="narrative"> 
+   <p> 指令解码器无疑是最复杂的CPU的一部分。它在第23章的页面中分为几个部分展示，但在这里所有组件都组装成了一个极其复杂的电路。</p> 
+   <p> 除非您有一个巨大的屏幕，否则可能需要缩小浏览器窗口才能看到整个电路。</p> 
+   <p> 使用左上角的旋转控件选择操作码。指令助记符显示在旋转控件上方。您会注意到，此电路中没有实现许多Intel 8080指令。</p> 
+   <p> 旋转控件下方的解码器与一系列AND门一起使用，以确定操作码属于哪个指令家族。</p> 
+   <p> 默认情况下，指令假定为一个字节的取指和一个周期的执行。如果不是这种情况，则左下角的门确定必须从内存中获取多少字节以及执行需要多少周期。触发器、计数器和解码器生成对应于取指周期、程序计数器(PC)增量周期和执行周期的信号。4-to-16解码器下方的一些电路与书中第370页所示的略有不同。</p> 
+   <p> 在底部的最右侧，您会看到用于控制CPU中几个组件的信号。这些控制信号对所有指令都是相同的。特定于每个指令的控制信号由占据电路右上角大部分区域的大型二极管矩阵处理。每个指令家族为第一个和第二个执行周期以及相应的脉冲周期生成某些控制信号。</p> 
+  </div> 
+  <div class="canvas-container" style="position: relative"> 
+   <canvas id="canvasInstructionDecoder" width="2300" height="1900">
+     Your browser does not support the canvas element. 
+   </canvas> 
+  </div> 
+  <div class="narrative"> 
+   <p> 您可以通过按下<b>Clock</b>按钮来控制每条指令的获取和执行。</p>
+   <p> 例如，选择指令C6h，即ADI指令(Add Immediate)。按下并释放<b>Reset</b>按钮将所有内容恢复到初始状态。</p>
+   <p> 您会看到左下角的电路已确定此指令需要<b>2-Byte Fetch</b>(指令字节本身和随后的数据字节)和<b>2-Byte Execute</b>。但在实际CPU中，这些信息要等到指令从内存获取并存储在指令锁存器中后才会可用。</p>
+   <p> <b>Cycle Decoding</b>部分的<b>4-to-16 Decoder</b>输入全为0，表示0输出信号为1，指示<b>Fetch Cycle 1</b>。在最右侧，您会看到<b>Program Counter Enable</b>信号已将程序计数器的内容放到地址总线上以寻址随机存取内存，<b>RAM Data Out Enable</b>信号允许内存内容被放到数据总线上。这就是指令字节。</p>
+   <p> 现在按下<b>Clock</b>按钮但不要释放。<b>Pulse</b>信号触发<b>Instruction Latch 1 Clock</b>存储指令，<b>Increment-Decrement Clock</b>信号将地址总线内容存储在Incrementer-Decrementer中。现在释放<b>Clock</b>按钮。</p>
+   <p> 再次按下并释放<b>Clock</b>按钮。现在我们处于<b>PC Increment Cycle</b>，<b>Increment Enable</b>信号允许程序计数器的递增值被放到地址总线上。</p>
+   <p> 现在按下<b>Clock</b>按钮但不要释放。<b>Pulse</b>信号触发<b>Program Counter Clock</b>将递增值存储在程序计数器中。现在释放<b>Clock</b>按钮。</p>
+   <p> 按下并释放<b>Clock</b>按钮。现在我们处于<b>Fetch Cycle 2</b>，<b>Program Counter Enable</b>和<b>RAM Data Out Enable</b>信号已将下一个字节(本指令的数据字节)放到数据总线上。</p>
+   <p> 按下<b>Clock</b>按钮触发<b>Pulse</b>信号，使<b>Instruction Latch 2</b>存储该字节，<b>Increment-Decrement Clock</b>将程序计数器值存储在Incrementer-Decrementer中。</p>
+   <p> 按下并释放<b>Clock</b>按钮使我们进入另一个<b>PC Increment Cycle</b>。再次按下按钮将递增值存储回程序计数器。</p>
+   <p> 再次按下并释放<b>Clock</b>按钮。现在我们处于<b>Execute Cycle 1</b>准备执行此指令。您会注意到顶部二极管矩阵和<b>Execute Cycle 1</b>信号使<b>Inst Latch 2 Enable</b>信号将数据字节值放到数据总线上。</p>
+   <p> 按下<b>Clock</b>按钮但不要释放。<b>Pulse</b>信号触发<b>ALU Clock</b>将该值存储在Arithmetic Logic Unit中。释放<b>Clock</b>按钮。</p>
+   <p> 再次按下并释放<b>Clock</b>按钮。现在我们处于<b>Execute Cycle 2</b>，<b>ALU Enable</b>信号允许Arithmetic Logic Unit的内容被放到数据总线上。该值是Accumulator加上数据字节。</p>
+   <p> 按下<b>Clock</b>按钮但不要释放。<b>Pulse</b>信号触发<b>Acc. Clock</b>将该值存储在Accumulator中。释放<b>Clock</b>按钮。指令已执行完毕。</p>
+   <p> 如果继续按下并释放<b>Clock</b>按钮，指令将再次执行，但在实际CPU中，将从内存获取不同的指令。</p>
+  </div> 
+  <h3>中央处理器单元</h3> 
+  <div class="narrative"> 
+   <p> CPU的所有组件已在此组装并连接到随机存取存储器块。组件通过8位数据总线(较细的数据路径)、16位地址总线(较粗的数据路径)和控制信号(线路)连接。上面显示的指令解码器现在封装在中央的大盒子中。</p> 
+   <p> 此电路演示了CPU如何执行整个程序。存储在内存中的字节构成了书中第318页显示的程序。该程序将两个双字节数字相加，即5,000和2,500的十六进制等效值。</p>
+  </div>
+  <div class="canvas-container" style="position: relative">
+   <canvas id="canvasCentralProcessingUnit" width="2050" height="1300">
+     您的浏览器不支持画布元素
+   </canvas>
+  </div>
+  <div class="narrative">
+   <p> 当您点击<b>Clock</b>按钮时，下方的<b>Instruction Decoder</b>指示周期和获取的操作码。控制信号触发<b>Instruction Decoder</b>左侧的<b>Instruction Latches</b>、<b>Program Counter</b>和<b>Incrementer-Decrementer</b>，以及右侧的<b>Register Array</b>和<b>Arithmetic Logic Unit</b>。</p>
+   <p> 请记住，从<b>Instruction Decoder</b>到<b>Register Array</b>的<b>S<sub>0</sub></b>、<b>S<sub>1</sub></b>、<b>S<sub>2</sub></b>、<b>D<sub>0</sub></b>、<b>D<sub>1</sub></b>和<b>D<sub>2</sub></b>信号可能会受到不涉及<b>Register Array</b>的指令的影响。<b>Source</b>信号仅在<b>RA Clock</b>信号在<b>Register Array</b>中保存值时才有意义；<b>Destination</b>信号仅在<b>RA Enable</b>信号将值放在数据总线上时才有意义。</p>
+   <p> 类似地，从<b>Instruction Decoder</b>到<b>Arithmetic Logic Unit</b>的<b>R<sub>0</sub></b>、<b>R<sub>1</sub></b>和<b>R<sub>2</sub></b>信号仅在<b>ALU Clock</b>信号在ALU中保存值时才有意义。</p>
+   <p> 当您重复点击<b>Clock</b>按钮时，最左侧的<b>Memory</b>组件显示正在寻址的字节。两条总线显示该总线上的值。当程序执行内存位置000Eh处的HLT指令时，程序已完成。相加的两个值的和存储在内存位置0x0010和0x0011中。该值为1D4Ch或十进制的7,500。</p>
+  </div> 
+  <hr> 
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+  <script src="js/PropagatingLogicLib.240618.js"></script> 
+  <script src="js/PropagatingGatesLib.240618.js"></script> 
+  <script src="js/PropagatingIoLib.240618.js"></script> 
+  <script src="js/PropagatingBoxesLib.240618.js"></script> 
+  <script src="js/PropagatingDataPathLib.240618.js"></script> 
+  <script src="js/PropagatingAdvIoLib.240619.js"></script> 
+  <script src="js/PropagatingAdvBoxesLib.240618.js"></script> 
+  <script src="js/PropagatingSemiconductorsLib.240618.js"></script> 
+  <script src="js/StructuredLayoutLib.240618.js"></script> 
+  <script src="js/PropagatingCpuBoxesLib.240618.js"></script> 
+  <script src="js/PropagatingMemoryLib.240618.js"></script> 
+  <script src="js/Chapter23InstructionDecoder.json.js"></script> 
+  <script src="js/Chapter23CPUCommon.json.js"></script> 
+  <script src="js/Chapter23CentralProcessingUnit.json.js"></script> 
+  <script>
+            new CircuitBuilder(canvasInstructionDecoder, Chapter23InstructionDecoder);
+            new CircuitBuilder(canvasCentralProcessingUnit, Chapter23CentralProcessingUnit);
+        </script>  
+ </body>
+</html>
