@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>11 算术逻辑单元</title> 
+  <link rel="stylesheet" href="css/style.240618.css"> 
+ </head> 
+ <body> 
+  <header> 
+   <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   <h2>11 算术逻辑单元</h2> 
+  </header> 
+  <div class="narrative"> 
+   <p> 本章开始构建一个八位CPU，它是Intel 8080微处理器的功能子集。</p> 
+   <p> 从算术逻辑单元(ALU)开始。在下面的电路中，ALU分为两部分：第一部分是处理加法和减法的算术单元，第二部分处理按位逻辑运算。</p> 
+  </div> 
+  <h3>加减法单元</h3> 
+  <div class="narrative"> 
+   <p> 此电路实现加法和减法。顶部的两个"旋转控件"允许您选择两个要相加的十六进制数字。点击每个数字右侧的箭头可递增或递减1。左侧的箭头将数字递增或递减16(十六进制10)。</p> 
+   <p> 左上角的两个按钮允许您选择四个功能之一：<b>Add</b>、<b>Add with Carry</b>、<b>Subtract</b>和<b>Subtract with Borrow</b>。</p> 
+   <p> 底部的十六进制<b>Result</b>显示结果。进位由左侧的<b>CY In</b>按钮和右侧的<b>CY Out</b>指示灯处理。</p> 
+  </div> 
+  <div class="canvas-container" style="position: relative"> 
+   <canvas id="canvasAddSubtractUnit" width="1075" height="725">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <div class="narrative"> 
+   <p> 这与书中显示的电路略有不同，因为<b>CY In</b>和<b>CY Out</b>的值在减法时会被反转。(第322页表格右下角的条目应为<span style="text-decoration:overline">CY</span>)</p>
+   <p> 8位CPU必须能够加减16位、24位、32位等数字。因此，它必须能够保存8位加法或减法的进位，并在下一次运算中使用。</p>
+   <p> 对于<b>Add</b>功能，左侧的<b>CY In</b>按钮无效。<b>Result</b>是两个数字和的低字节，范围从00h到FFh。如果和超过255，<b>CY Out</b>位将设为1。</p>
+   <p> 对于<b>Add with Carry</b>，<b>CY In</b>按钮通过将加法器的<b>CI</b>输入设为1，使两个数字的和加1。</p>
+   <p> 当相加两个多字节数字时，对最低有效字节对使用<b>Add</b>。对于后续的字节对，使用<b>Add with Carry</b>并将<b>CY In</b>设为前一对字节相加得到的<b>CY Out</b>值。</p>
+   <p> 您可以尝试相加一些16位数字的示例。以下是一些可用的示例数字：</p>
+   <table> 
+    <tbody>
+     <tr>
+      <th>十进制</th>
+      <th>十六进制</th>
+     </tr> 
+     <tr>
+      <td>10,000</td>
+      <td>2710h</td>
+     </tr> 
+     <tr>
+      <td>15,000</td>
+      <td>3A98h</td>
+     </tr> 
+     <tr>
+      <td>20,000</td>
+      <td>4E20h</td>
+     </tr> 
+     <tr>
+      <td>25,000</td>
+      <td>61A8h</td>
+     </tr> 
+     <tr>
+      <td>30,000</td>
+      <td>7530h</td>
+     </tr> 
+     <tr>
+      <td>40,000</td>
+      <td>9C40h</td>
+     </tr> 
+    </tbody>
+   </table> 
+   <p> 例如，相加2710h和7530h。分两步进行：首先<b>Add</b>10h和30h，结果是40h且<b>CY Out</b>设为0。然后<b>Add with Carry</b>高字节27h和75h，<b>CY In</b>设为0，结果是9Ch，组合结果为9C40h。</p>
+   <p> 现在尝试一个有进位的例子，如相加3A98h和61A8h。首先<b>Add</b>低字节98h和A8h，结果是40h且<b>CY Out</b>设为1。然后<b>Add with Carry</b>高字节3Ah和61h，<b>CY In</b>设为1(即前一对字节相加得到的<b>CY Out</b>)，结果是9Ch，组合结果为9C40h。</p>
+   <p> 现在尝试相加7530h和9C40h。首先<b>Add</b>30h和40h，结果是70h且<b>CY Out</b>为0。然后<b>Add with Carry</b>75h和9Ch，<b>CY In</b>设为0，结果是11但<b>CY Out</b>值为1表示溢出。</p>
+   <p> 这个溢出意味着您实际上在处理24位数字。因此，<b>Add with Carry</b>00h和00h，<b>CY In</b>设为1，结果当然是01，表示3字节组合结果为011170h或十进制的70,000。</p>
+   <p> 对于<b>Subtract</b>功能，左侧的<b>CY In</b>按钮无效。通过反转<b>B</b>的位，将它们加到<b>A</b>上，再加1(通过将加法器的<b>CI</b>输入设为1实现)来从<b>A</b>中减去<b>B</b>的值。如果<b>B</b>小于或等于<b>A</b>，<b>Result</b>是差值。如果<b>B</b>大于<b>A</b>，<b>CY Out</b>指示灯表示需要借位。</p>
+   <p> 让我们尝试一些减法，例如7530h减去4E20h。从低字节开始：将功能设为<b>Subtract</b>，<b>A</b>设为30h，<b>B</b>设为20h。差值是10h且<b>CY Out</b>设为0。然后选择<b>Subtract with Borrow</b>，将<b>A</b>和<b>B</b>设为高字节75h和4Eh，<b>CY In</b>设为0。结果是27h，组合结果为2710h。</p>
+   <p> 现在尝试7530h减去3A98h。将功能设为<b>Subtract</b>，<b>A</b>设为30h，<b>B</b>设为98h。结果是98h且<b>CY Out</b>设为1。然后对高字节75h和3Ah使用<b>Subtract with Borrow</b>，但将<b>CY In</b>设为1以匹配第一对字节的<b>CY Out</b>值。结果是3Ah，组合结果为3A98h。</p>
+   <p> 最后一个例子，尝试3A98h减去7530h。首先<b>Subtract</b>低字节98h和30h，结果是68h且<b>CY Out</b>位为0。然后<b>Subtract with Borrow</b>高字节3Ah和75h，<b>CY In</b>设为0。结果是C5h，组合结果为C568h，但<b>CY Out</b>值为1表示溢出。</p>
+   <p> 下一步可以像处理加法溢出那样，将计算扩展到24位。再次选择<b>Subtract with Borrow</b>，但将<b>A</b>和<b>B</b>都设为0，<b>CY In</b>设为1。现在结果是FFh且<b>CY In</b>仍为1。</p>
+   <p> 您可以继续，但尝试使用Windows或macOS计算器的程序员模式计算3A98h减去7530h。您会得到FFFFFFFFFFFFC598h，表示等于-15,000的负数。(或者，您可以通过反转所有位并加1来计算FFFFFFFFFFFFC598h的补码。结果是3A98h，即十进制15,000。)</p>
+  </div> 
+  <h3>逻辑单元</h3> 
+  <div class="narrative"> 
+   <p> ALU的逻辑部分比算术部分简单得多。只需要三个执行按位AND、XOR和OR操作的盒子，以及一个选择器来选择启用哪个三态缓冲器：</p>
+  </div> 
+  <div class="canvas-container" style="position: relative"> 
+   <canvas id="canvasLogicUnit" width="950" height="875">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <div class="narrative"> 
+   <p> 与加减法单元一样，您可以为输入选择两个十六进制数字。使用左侧的按钮选择操作：</p> 
+   <ul> 
+    <li>1 0 0 表示按位AND</li> 
+    <li>1 0 1 表示按位XOR</li> 
+    <li>1 1 0 表示按位OR</li> 
+   </ul> 
+   <p> 如果最左侧的按钮为0，则没有选择任何三态缓冲器，因为这是算术操作。如果按钮设为1 1 1，则是比较操作，由下一个电路处理。</p>
+  </div> 
+  <h3>算术逻辑单元</h3> 
+  <div class="narrative"> 
+   <p> 算术逻辑单元结合了加减法单元和逻辑单元。书中第332页的版本有些简化，没有正确处理比较指令。处理比较指令涉及更多复杂性，如下所示：</p>
+  </div> 
+  <div class="canvas-container" style="position: relative"> 
+   <canvas id="canvasArithmeticLogicUnit" width="1200" height="1500">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <div class="narrative"> 
+   <p> <b>A</b>和<b>B</b>输入在顶部左右两侧设置。选择功能的按钮位于顶部中央：</p> 
+   <ul> 
+    <li>0 0 0 表示加法</li> 
+    <li>0 0 1 表示带进位加法</li> 
+    <li>0 1 0 表示减法</li> 
+    <li>0 1 1 表示带借位减法</li> 
+    <li>1 0 0 表示按位AND</li> 
+    <li>1 0 1 表示按位XOR</li> 
+    <li>1 1 0 表示按位OR</li> 
+    <li>1 1 1 表示比较</li> 
+   </ul> 
+   <p> 左下角的<b>Clock</b>输入保存计算结果和三个标志的状态。右下角的<b>Enable</b>按钮显示结果。</p> 
+   <p> 前四个功能由本章前面介绍的<b>Add/Sub</b>模块处理。<b>CY Out</b>值保存在底部的<b>Flags Latch</b>中，然后路由回<b>CY In</b>输入。</p> 
+   <p> 逻辑功能(AND、XOR和OR)由右上方的<b>Logic</b>模块处理。这些功能总是清除<b>Carry</b>标志(即设为0)，这解释了通向<b>Flags Latch</b>的<b>CY</b>输入的一些逻辑。</p> 
+   <p> 对于算术功能和逻辑功能AND、XOR、OR，如果结果为零，<b>Zero</b>标志被设置。这由电路中间的八输入NOR门处理。</p> 
+   <p> 复杂的是比较操作。比较操作设置<b>Zero</b>和<b>Carry</b>标志，就像发生了减法一样。如果<b>A</b>和<b>B</b>输入相等，<b>Zero</b>标志被设置；如果<b>A</b>小于<b>B</b>，<b>CY</b>标志被设置。</p> 
+   <p> 然而，比较操作不会在累加器中保存新值。因此，如果发生比较操作，<b>A</b>输入通过最左侧的三态缓冲器启用，以保存在右下角的<b>Latch</b>中。</p> 
+   <p> 对于比较操作，<b>Add/Sub</b>模块执行带借位的减法，因为F<sub>1</sub>和F<sub>0</sub>都为1。因此，执行比较操作时，<b>CY In</b>设为0。</p> 
+  </div> 
+  <hr> 
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+  <script src="js/PropagatingLogicLib.240618.js"></script> 
+  <script src="js/PropagatingGatesLib.240618.js"></script> 
+  <script src="js/PropagatingIoLib.240618.js"></script> 
+  <script src="js/PropagatingBoxesLib.240618.js"></script> 
+  <script src="js/PropagatingDataPathLib.240618.js"></script> 
+  <script src="js/PropagatingAdvIoLib.240619.js"></script> 
+  <script src="js/PropagatingAdvBoxesLib.240618.js"></script> 
+  <script src="js/StructuredLayoutLib.240618.js"></script> 
+  <script src="js/Chapter21AddSubtractUnit.json.js"></script> 
+  <script src="js/Chapter21LogicUnit.json.js"></script> 
+  <script src="js/Chapter21ArithmeticLogicUnit.json.js"></script> 
+  <script>
+            new CircuitBuilder(canvasAddSubtractUnit, Chapter21AddSubtractUnit);
+            new CircuitBuilder(canvasLogicUnit, Chapter21LogicUnit);
+            new CircuitBuilder(canvasArithmeticLogicUnit, Chapter21ArithmeticLogicUnit);
+        </script>  
+ </body>
+</html>

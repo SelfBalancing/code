@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>10 自动操作</title> 
+  <link rel="stylesheet" href="css/style.240618.css"> 
+ </head> 
+ <body> 
+  <header> 
+   <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br></h1> 
+   <h2>10 自动操作</h2> 
+  </header> 
+  <div class="narrative"> 
+   <p> 本章描述了两个自动化加法电路。第一个是自动累加加法器，其中字节值存储在存储器中。这些值相加后，和存储在第一个内存位置，该位置有一个零字节。</p> 
+   <p> 第二个是三字节加法器。它可以对存储在内存中的三字节值进行加减运算，每个值前面都有一个单字节代码。</p> 
+   <p> 容量为1,024字节的随机存取存储器由电路左侧的矩形区域表示。通过点击条目，您可以更改值。将出现一个文本框。以十六进制输入新数字并点击<b>Write</b>按钮。</p> 
+   <p> 您可能需要缩小浏览器窗口才能在单个屏幕上看到整个电路。</p> 
+  </div> 
+  <h3>自动累加加法器</h3> 
+  <div class="narrative"> 
+   <p> 左侧<b>1K Memory</b>数组中的值与书中描述的值相同。<b>Counter</b>输出地址0000h，第一个字节是<b>Adder</b>的<b>A</b>输入。</p> 
+   <p> 要开始累加加法器，请点击<b>Clock</b>按钮。内存中第一个字节与00h的和将保存在<b>Latch</b>中。</p> 
+   <p> 再次点击<b>Clock</b>按钮，<b>Counter</b>前进到下一个内存地址0001h，并访问内存的第二个字节。再次点击<b>Clock</b>将把新的累加和保存在锁存器中。</p> 
+   <p> 继续操作，直到将<b>Latch</b>中的和写入内容为00h的第一个内存地址。</p> 
+  </div> 
+  <div class="canvas-container" style="position: relative"> 
+   <canvas id="canvasOneByteAdder" width="1100" height="875">
+     您的浏览器不支持画布元素
+   </canvas> 
+  </div> 
+  <div class="narrative"> 
+   <p> 按下<b>Clear</b>按钮可重置<b>Flip-Flops</b>、<b>Counter</b>和<b>Latch</b>。<b>Clear</b>按钮不会影响<b>Memory</b>的内容。要恢复<b>Memory</b>的原始值，请刷新浏览器页面。</p> 
+   <p> 您可能会注意到两个触发器的配置与书中所示略有不同。书中的版本在概念上更清晰，因为第一次点击<b>Clock</b>前进<b>Counter</b>，而第二次点击生成Pulse信号。</p> 
+   <p> 然而，如果<b>Counter</b>从地址0000h开始，这种方法就不太适用。在这种情况下，第一次点击<b>Clock</b>必须生成Pulse信号，第二次点击才前进<b>Counter</b>。因此，两个触发器启动时处于设定状态，<b>Q</b>输出等于1，且<b>Clear</b>按钮连接到触发器的<b>Preset</b>输入端。</p> 
+   <p> 这种相同的双触发器配置也用于本章的下一个程序和第23章的<b>Instruction Decoder</b>中。</p> 
+  </div> 
+  <h3>三字节累加器</h3>
+  <div class="narrative">
+   <p> 左侧<b>1K Memory</b>数组中的值与书中描述的值相同。<b>Counter</b>输出地址0000h，访问内存中的第一个字节。这是一个指令字节。要开始使用三字节加法器，请点击<b>Clock</b>按钮。第一次点击将字节保存在<b>Instruction Latch</b>中。第二次点击前进<b>Counter</b>，第三次点击将该字节保存在<b>Low-Byte Latch</b>中。</p>
+   <p> 接下来的四次<b>Clock</b>点击将地址前进到0002h并锁存下一个最高有效字节，然后将地址前进到0003以锁存最高有效字节。</p>
+   <p> 继续以这种方式加减接下来的几个数字。当指令字节为04h时，结果的三个字节被写入内存。当指令字节为08h时，机器停止。</p>
+  </div>
+  <div class="canvas-container" style="position: relative">
+   <canvas id="canvasThreeByteAdder" width="1800" height="1250">
+     您的浏览器不支持画布元素
+   </canvas>
+  </div>
+  <div class="narrative">
+   <p> 按<b>Clear</b>按钮清除<b>Flip-Flops</b>、<b>Counter</b>和<b>Latches</b>。<b>Clear</b>按钮不影响<b>Memory</b>的内容。要恢复<b>Memory</b>的原始值，请刷新浏览器页面。</p>
+  </div> 
+  <div style="text-align: center; margin: 20px 0;">
+
+    <img src="https://obsidian-1324919814.cos.ap-chengdu.myqcloud.com/36fed8d6e009a175ac53844917159cb.jpg" alt="自权的SPACE公众号二维码" style="max-width: 300px; display: block; margin: 0 auto;">
+    <p>关注 <a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a> 掌握最新更新</p>
+    <h2>公众号后台回复 <b>编码</b> 加入读者群📚 </h2>
+   </div>
+  <hr> 
+  <div class="narrative"> 
+    <h1> <a href="../index.html"><i>CODE 返回目录</i></a><br><i>计算机硬件与软件背后的隐藏语言</i><br> </h1> 
+   </div> 
+  <footer>
+    <p> © 2025 网页交互动画来源于<a href="https://www.charlespetzold.com">charlespetzold</a> ，汉化：<a href="https://selfbalancing.github.io/homepage"> 自权的SPACE</a></p>
+  </footer> 
+  <script src="js/PropagatingLogicLib.240618.js"></script> 
+  <script src="js/PropagatingGatesLib.240618.js"></script> 
+  <script src="js/PropagatingIoLib.240618.js"></script> 
+  <script src="js/PropagatingBoxesLib.240618.js"></script> 
+  <script src="js/PropagatingMemoryLib.240618.js"></script> 
+  <script src="js/PropagatingDataPathLib.240618.js"></script> 
+  <script src="js/StructuredLayoutLib.240618.js"></script> 
+  <script src="js/Chapter20OneByteAdder.json.js"></script> 
+  <script src="js/Chapter20ThreeByteAdder.json.js"></script> 
+  <script>
+            new CircuitBuilder(canvasOneByteAdder, Chapter20OneByteAdder);
+            new CircuitBuilder(canvasThreeByteAdder, Chapter20ThreeByteAdder);
+        </script>  
+ </body>
+</html>
