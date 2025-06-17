@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh">
+ <head> 
+  <meta charset="utf-8"> 
+  <title>Code: 逻辑与开关01</title> 
+  <link rel="stylesheet" href="css/style.240618.css"> 
+ </head> 
+ <body> 
+  <header> 
+  
+
+  <div class="canvas-container"> 
+   <canvas id="canvasSeries" width="640" height="400">
+    您的浏览器不支持画布元素，请升级或者使用电脑浏览器
+   </canvas> 
+  </div> 
+
+
+ 
+  <script src="js/PropagatingLogicLib.240618.js"></script> 
+  <script src="js/PropagatingIoLib.240618.js"></script> 
+  <script src="js/StructuredLayoutLib.240618.js"></script> 
+  <script src="js/Chapter06SwitchesInSeries.json.js"></script> 
+  <script src="js/Chapter06SwitchesInParallel.json.js"></script> 
+  <script src="js/Chapter06KittenSelector.json.js"></script> 
+  <script>
+            new CircuitBuilder(canvasSeries, Chapter06SwitchesInSeries);
+            new CircuitBuilder(canvasParallel, Chapter06SwitchesInParallel);
+            new CircuitBuilder(canvasKittens, Chapter06KittenSelector);
+        </script>  
+ </body>
+</html>
